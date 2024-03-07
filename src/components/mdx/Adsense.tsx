@@ -21,17 +21,17 @@ export function Adsense() {
 
 	if (failed)
 		return (
-			<Warning title="Việc chặn quảng cáo là quá tàn nhẫn" type="warn">
-				<p>Tắt AdBlocker và để robot sống thêm một ngày nữa</p>
+			<Warning title="Hãy tắt trình chặn quảng cáo" type="warn">
+				<p>Hãy tắt AdBlocker để hỗ trợ trang web của chúng tôi</p>
 			</Warning>
 		)
 
 	return (
 		<div aria-label="ads">
-			<p className="my-2 text-center text-sm text-gray-400">Món ăn tinh thần của rồng robot</p>
+			<p className="my-2 text-center text-sm text-gray-400">Quảng cáo giúp chúng tôi duy trì trang web này</p>
 			<div
 				className={clsx(
-					"after:content-['Thật vô tâm, tại sao không có quảng cáo hiển thị?'] relative min-h-[280px] after:z-[-1] after:text-gray-500",
+					"after:content-['Rất tiếc, không có quảng cáo nào được hiển thị.'] relative min-h-[280px] after:z-[-1] after:text-gray-500",
 					'after:absolute after:left-1/2 after:top-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:transform after:text-sm',
 				)}
 			>
