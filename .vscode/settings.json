@@ -1,0 +1,19 @@
+{
+	"editor.tabSize": 4,
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit",
+		"source.addMissingImports": "explicit"
+	},
+	"files.associations": {
+		"*.mdx": "markdown"
+	},
+	"tailwindCSS.experimental.classRegex": [
+		[
+			"clsx\\(([^)]*)\\)",
+			"(?:'|\"|`)([^']*)(?:'|\"|`)"
+		]
+	],
+	"css.lint.unknownAtRules": "ignore"
+}

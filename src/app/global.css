@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.prose-text :where(h2, h3, h4, h5, h6):not(:where([class~="nd-not-prose"] *)) {
+    @apply font-bold;
+}
+
+.prose {
+    --tw-prose-body: hsl(var(--muted-foreground));
+}
