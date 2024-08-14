@@ -15,7 +15,10 @@ export default function TagPage({ params }: { params: { tag: string } }) {
 		<main className="my-16 flex w-full flex-1 flex-col gap-5">
 			<div className="mb-5 flex flex-col gap-5">
 				<h1 className="mb-4 text-center text-3xl font-bold">
-					{`Bài viết được gắn thẻ「${decodedTag.replace(/(\b\w)|-/g, (_, letter: string | undefined) => (letter ? letter.toUpperCase() : ' '))}」`}
+					{`Bài viết được gắn thẻ`}
+					<span className="text-blue-500 dark:text-amber-300">
+						{` ${decodedTag.replace(/(\b\w)|-/g, (_, letter: string | undefined) => (letter ? letter.toUpperCase() : ' '))}`}
+					</span>
 				</h1>
 				<LinkButton href="/tags" className="mx-auto">
 					Tất cả các thẻ
@@ -42,13 +45,13 @@ export function generateMetadata({ params }: { params: { tag: string } }): Metad
 	const decodedTag = decodeURIComponent(params.tag)
 
 	return {
-		title: `Bài viết được gắn thẻ「${decodedTag}」`,
+		title: `Bài viết được gắn thẻ ${decodedTag}`,
 		alternates: {
 			canonical: `${domain}/tags/${params.tag}`,
 		},
 		openGraph: {
 			images: '/cover.png',
-			title: `Bài viết được gắn thẻ「${decodedTag}」`,
+			title: `Bài viết được gắn thẻ ${decodedTag}`,
 		},
 	}
 }
