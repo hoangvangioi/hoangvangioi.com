@@ -7,6 +7,7 @@ export const GITHUB_USER = process.env.NEXT_PUBLIC_GITHUB_USER ?? ''
 export const SEARCH_URL = process.env.NEXT_PUBLIC_SEARCH_URL ?? '/api/search'
 export const AD_CLIENT = process.env.NEXT_PUBLIC_AD_CLIENT ?? ''
 export const AD_SLOT = process.env.NEXT_PUBLIC_AD_SLOT ?? ''
+export const EMBED_ELEMENT = process.env.NEXT_PUBLIC_EMBED_ELEMENT ?? ''
 
 export const urlBase = new URL(SITE_URL)
 

@@ -7,6 +7,7 @@ import { ExternalLinkIcon } from 'lucide-react'
 import { InlineTOC } from 'fumadocs-ui/components/inline-toc'
 import { findNeighbour } from 'fumadocs-core/server'
 import { GITHUB_REPO, GITHUB_USER } from '@config'
+import Embed from '@/components/ui/embed'
 
 export default function BlogPage({ params }: { params: { slug: string } }) {
 	const page = utils.getPage([params.slug])
@@ -40,6 +41,7 @@ export default function BlogPage({ params }: { params: { slug: string } }) {
 					</div>
 					<page.data.exports.default />
 				</DocsBody>
+				<Embed />
 			</DocsPage>
 		</div>
 	)
