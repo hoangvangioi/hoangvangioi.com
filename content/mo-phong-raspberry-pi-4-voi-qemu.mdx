@@ -1,0 +1,196 @@
+---
+title: Mô phỏng Raspberry Pi 4 với QEMU
+authors: [gioi]
+tags: [Raspberry Pi 4, QEMU]
+description: Khám phá cách mô phỏng Raspberry Pi 4 bằng QEMU để thử nghiệm và phát triển phần mềm hiệu quả. Tìm hiểu cách thiết lập cần thiết, mẹo khắc phục vấn đề và mở khóa một môi trường ARM ảo mạnh mẽ!
+date: '2024-09-14T21:08:29.000Z'
+image: /posts/mo-phong-raspberry-pi-4-voi-qemu/cover.webp
+---
+
+![banner](/posts/mo-phong-raspberry-pi-4-voi-qemu/cover.webp)
+
+## Giới thiệu
+
+Trong bài viết này, chúng ta sẽ tìm hiểu cách mô phỏng Raspberry Pi 4 bằng QEMU. Quá trình này sẽ được thực hiện trên cả hai hệ điều hành phổ biến là Arch Linux và Ubuntu/Debian. Mặc dù QEMU không tái tạo chức năng hoàn chỉnh của Raspberry Pi 4, nhưng nó rất hữu ích cho việc thử nghiệm và phát triển phần mềm. Hướng dẫn này sẽ giúp bạn tạo ra môi trường ảo cho Raspberry Pi OS (64-bit).
+
+<Adsense />
+
+## Bước 1: Cài đặt các gói cần thiết
+
+### Trên Ubuntu/Debian
+
+Đối với người dùng Ubuntu hoặc Debian, mở terminal và chạy các lệnh sau để cài đặt các gói cần thiết:
+
+```bash
+# Cập nhật hệ thống
+sudo apt update && sudo apt upgrade
+
+# Cài đặt trình biên dịch và QEMU
+sudo apt install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu qemu-system-arm qemu-utils
+```
+
+### Trên Arch Linux
+
+Đối với người dùng Arch Linux, mở terminal và chạy các lệnh sau để cài đặt các gói cần thiết:
+
+```bash
+# Cập nhật hệ thống
+sudo pacman -Syu 
+
+# Cài đặt QEMU và các gói liên quan
+sudo pacman -S qemu qemu-system-aarch64 base-devel wget git
+```
+
+Sau khi cài đặt xong, kiểm tra phiên bản của QEMU trên cả hai hệ điều hành để đảm bảo mọi thứ đã được cài đặt chính xác:
+
+```bash
+# Kiểm tra phiên bản QEMU
+qemu-system-aarch64 --version
+```
+
+## Bước 2: Tải về Raspberry Pi OS
+
+Bây giờ, bạn cần tải hình ảnh của Raspberry Pi OS (64-bit). Chúng ta sẽ tải về phiên bản có giao diện desktop, phiên bản kernel: 6.6, Debian phiên bản: 12 (bookworm), phát hành vào ngày 4 tháng 7 năm 2024. Hình ảnh sẽ có tên là `2024-07-04-raspios-bookworm-arm64.img.xz`.
+
+Sử dụng lệnh sau để tải về (thao tác này áp dụng cho cả Ubuntu/Debian và Arch Linux):
+
+```bash
+wget https://downloads.raspberrypi.com/raspios_arm64/images/raspios_arm64-2024-07-04/2024-07-04-raspios-bookworm-arm64.img.xz
+```
+
+Giải nén tệp ảnh của bằng cách sử dụng:
+```bash
+unxz 2024-07-04-raspios-bookworm-arm64.img.xz
+```
+
+Lưu tệp vào thư mục `/home/mydir` (nếu chưa có thư mục này, hãy tạo nó trước):
+
+```bash
+mkdir -p ~/mydir
+mv 2024-07-04-raspios-bookworm-arm64.img ~/mydir/
+```
+
+## Bước 3: Xây dựng kernel linux cho ARM64
+
+Để xây dựng kernel cho ARM64, bạn cần tải về kernel từ Kernel.org và biên dịch nó. Dưới đây là các bước cần thực hiện.
+
+```bash
+# Tải kernel
+wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.51.tar.xz
+tar xvJf linux-6.6.51.tar.xz
+cd linux-6.6.51
+```
+
+Sau đó, thực hiện các lệnh dưới đây để cấu hình và biên dịch kernel:
+
+```bash
+# Tạo cấu hình mặc định cho ARM64
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make defconfig
+
+# Sử dụng cấu hình kvm_guest làm cơ sở (đây là cấu hình phù hợp cho QEMU)
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make kvm_guest.config
+
+# Bắt đầu quá trình xây dựng kernel
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make -j8
+```
+
+Sau khi hoàn tất quá trình biên dịch, sao chép tệp kernel vào thư mục `~/mydir`:
+
+```bash
+cp arch/arm64/boot/Image ~/mydir/
+```
+
+## Bước 4: Mount hình ảnh để thiết lập SSH
+
+Bây giờ bạn cần thiết lập SSH và cấu hình tên người dùng trong hình ảnh Raspberry Pi OS. Trước tiên, hãy xác định offset của phân vùng boot bằng lệnh `fdisk`:
+
+```bash
+fdisk -l ~/mydir/2024-07-04-raspios-bookworm-arm64.img
+```
+
+Từ kết quả hiển thị, bạn sẽ thấy có hai phân vùng. Tính toán offset để mount phân vùng boot:
+
+```plaintext
+Offset = Starting sector * Sector size
+Offset = 8192 * 512 = 4194304
+```
+
+Gắn kết hình ảnh vào thư mục `/mnt/rpi`:
+
+```bash
+sudo mkdir /mnt/rpi
+sudo mount -o loop,offset=4194304 ~/mydir/2024-07-04-raspios-bookworm-arm64.img /mnt/rpi
+```
+
+Tiếp theo, tạo tệp `ssh` để kích hoạt SSH:
+
+```bash
+cd /mnt/rpi
+sudo touch ssh
+```
+
+Tạo tệp `userconf.txt` trong cùng thư mục và thêm tên người dùng và mật khẩu bạn mong muốn với định dạng `<username>:<hashed-password>` (tên người dùng nên là `pi`). Tạo mật khẩu đã mã hóa bằng lệnh:
+
+```bash
+openssl passwd -6 
+```
+
+Sao chép kết quả và thêm vào tệp `userconf.txt`:
+
+```bash
+echo 'pi:<hashed-password>' | sudo tee userconf.txt
+```
+
+Cuối cùng, gỡ mount hình ảnh:
+
+```bash
+sudo umount /mnt/rpi
+```
+
+## Bước 5: Chạy giả lập QEMU
+
+Cuối cùng, bạn có thể khởi động Raspberry Pi OS trên môi trường ảo QEMU bằng lệnh sau:
+
+```bash
+cd ~/mydir
+qemu-system-aarch64 -machine virt -cpu cortex-a72 -smp 6 -m 4G \
+    -kernel Image -append "root=/dev/vda2 rootfstype=ext4 rw panic=0 console=ttyAMA0" \
+    -drive format=raw,file=2024-07-04-raspios-bookworm-arm64.img,if=none,id=hd0,cache=writeback \
+    -device virtio-blk,drive=hd0,bootindex=0 \
+    -netdev user,id=mynet,hostfwd=tcp::2222-:22 \
+    -device virtio-net-pci,netdev=mynet \
+    -monitor telnet:127.0.0.1:5555,server,nowait
+```
+
+Sau khi khởi động hoàn tất, đăng nhập vào máy ảo của bạn qua SSH:
+
+```bash
+ssh -l pi localhost -p 2222
+```
+
+Nhập mật khẩu mà bạn đã cấu hình trước đó.
+
+Nếu bạn đăng nhập vào Raspberry Pi qua SSH và thấy thông điệp làm phiền sau:
+
+```plaintext
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+```
+
+Đây là thông điệp ngày được hiển thị khi bạn đăng nhập và nó được lấy từ tệp `/etc/motd`. Nếu bạn muốn hoàn toàn vô hiệu hóa thông điệp này, bạn có thể tạo một tệp có tên `~/.hushlogin` bằng lệnh sau:
+
+```bash
+touch ~/.hushlogin
+```
+
+Việc tạo tệp này sẽ ngăn không cho thông điệp ngày xuất hiện mỗi khi bạn đăng nhập vào Raspberry Pi.
+
+## Kết Luận
+
+Mô phỏng Raspberry Pi 4 với QEMU là một phương pháp tuyệt vời để thử nghiệm và phát triển phần mềm mà không cần thiết bị vật lý. Hướng dẫn này đã cung cấp từng bước chi tiết để thiết lập môi trường ảo cho Raspberry Pi OS, giúp bạn tiếp cận với những dự án sáng tạo trong tương lai. Chúc bạn thành công trong việc khám phá và phát triển trên nền tảng Raspberry Pi!
+
+<Adsense />
