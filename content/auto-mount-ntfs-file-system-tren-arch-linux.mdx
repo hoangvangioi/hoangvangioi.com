@@ -1,0 +1,75 @@
+---
+title: Auto Mount NTFS File System trên Arch Linux
+authors: [gioi]
+tags: [Linux]
+description: Cách cài đặt ntfs-3g và tự động mount hệ thống tệp NTFS của Windows trên Arch Linux
+date: '2024-09-14T12:52:19.000Z'
+image: /posts/auto-mount-ntfs-file-system-tren-arch-linux/cover.webp
+---
+
+![banner](/posts/auto-mount-ntfs-file-system-tren-arch-linux/cover.webp)
+
+## Hướng dẫn cài đặt ntfs-3g và Auto Mount NTFS File System trên Arch Linux
+
+Một trong những vấn đề phổ biến mà người dùng Arch Linux thường gặp phải là cấu hình để tự động mount hệ thống tệp NTFS của Windows mỗi khi khởi động hệ thống. Trong bài viết này, chúng ta sẽ đi qua từng bước để cài đặt `ntfs-3g`, một công cụ hỗ trợ đọc và ghi dữ liệu trên hệ thống tệp NTFS, và thực hiện việc tự động mount một cách chi tiết.
+
+<Adsense />
+
+### Bước 1: Cài đặt ntfs-3g
+
+Trước tiên, cần cài đặt `ntfs-3g` trên Arch Linux để hỗ trợ đọc và ghi dữ liệu trên hệ thống tệp NTFS. Sử dụng lệnh sau để cài đặt `ntfs-3g` thông qua trình quản lý gói `pacman`:
+```sh
+sudo pacman -S ntfs-3g
+```
+
+### Bước 2: Xác định UUID của ổ đĩa NTFS
+
+Sau khi cài đặt `ntfs-3g`, mở terminal trên Arch Linux và sử dụng lệnh sau để xem danh sách các ổ đĩa và UUID của chúng:
+```sh
+lsblk -f
+```
+Tìm ổ đĩa NTFS mà bạn muốn tự động mount và ghi nhớ UUID của nó.
+```sh title="output"
+NAME FSTYPE FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+nvme0n1
+│
+├─nvme0n1p1
+│    ntfs         Windows 01DADC8A0A17A410
+├─nvme0n1p2
+│    vfat   FAT32         6C1B-29F0                               471M     5% /efi
+├─nvme0n1p3
+│    swap   1             d9a3608e-0dca-49b2-914a-5fd79180a68a                [SWAP]
+└─nvme0n1p4
+     ext4   1.0           c756e4a1-acf0-485c-8628-5c86199f4110  946.8M    94% /
+```
+
+### Bước 3: Tạo thư mục để mount ổ đĩa NTFS
+
+Sử dụng lệnh sau để tạo một thư mục mới để mount ổ đĩa NTFS (ví dụ: /mnt/windows):
+```sh
+sudo mkdir /mnt/windows
+```
+
+### Bước 4: Cấu hình tự động mount trong file /etc/fstab
+
+Mở file /etc/fstab bằng trình soạn thảo văn bản (ví dụ: nano) bằng lệnh sau:
+```sh
+sudo nano /etc/fstab
+```
+Thêm dòng sau vào cuối file với UUID của ổ đĩa NTFS và đường dẫn thư mục mount đã chọn:
+```
+UUID=YOUR_UUID /mnt/windows ntfs-3g defaults 0 0
+```
+Lưu và đóng file /etc/fstab.
+
+### Bước 5: Kiểm tra và khởi động lại hệ thống
+
+Sử dụng lệnh sau để kiểm tra cấu hình và tự động mount ổ đĩa NTFS:
+```sh
+sudo mount -a
+```
+Khởi động lại hệ thống để áp dụng cấu hình mới.
+
+Kể từ nay, mỗi khi khởi động hệ thống, ổ đĩa NTFS của Windows sẽ tự động được mount vào thư mục đã chọn trên Arch Linux. Điều này giúp tiết kiệm thời gian và công sức cho người dùng Linux khi làm việc với các tệp từ hệ thống Windows.
+
+<Adsense />
