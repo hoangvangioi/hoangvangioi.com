@@ -1,0 +1,144 @@
+---
+title: Hướng dẫn cài đặt Wireless Debugging trên Android sử dụng ADB Command
+authors: [gioi]
+tags: [adb]
+description: Khám phá sức mạnh của Wireless Debugging trên Android. Hướng dẫn này cung cấp các bước để thiết lập kết nối không dây và gửi lệnh ADB, giúp cải thiện quy trình phát triển của bạn.
+date: '2024-09-16T16:39:41.000Z'
+image: /posts/huong-dan-debug-khong-day-android-adb/cover.webp
+---
+
+![banner](/posts/huong-dan-debug-khong-day-android-adb/cover.webp)
+
+## Giới thiệu về Wireless Debugging trên Android
+
+Gỡ lỗi không dây đã cách mạng hóa cách các nhà phát triển tương tác với các thiết bị Android. Trước đây, các nhà phát triển phụ thuộc vào kết nối USB để gỡ lỗi ứng dụng. Tuy nhiên, những tiến bộ công nghệ đã cho phép giao tiếp liền mạch giữa thiết bị và môi trường phát triển mà không có những rào cản vật lý. Sự chuyển mình này không chỉ nâng cao năng suất mà còn cho phép các nhà phát triển thử nghiệm ứng dụng của họ trong các kịch bản thực tế một cách hiệu quả hơn.
+
+Bằng cách thiết lập gỡ lỗi không dây, các nhà phát triển có thể gửi lệnh ADB một cách dễ dàng. ADB, hay còn gọi là Android Debug Bridge, là một công cụ mạnh mẽ cho việc quản lý các thiết bị và ứng dụng Android. Việc sử dụng lệnh ADB qua mạng không dây giúp các nhà phát triển tinh giản quy trình làm việc, gỡ lỗi và kiểm tra ứng dụng. Trong bài viết này, chúng tôi sẽ hướng dẫn bạn các bước cần thiết để thiết lập gỡ lỗi không dây trên thiết bị Android của bạn, cho phép bạn gửi lệnh ADB một cách dễ dàng.
+
+## Bước 1: Chuẩn bị Thiết bị Android của bạn
+
+Trước khi đi vào gỡ lỗi không dây, điều quan trọng là đảm bảo rằng thiết bị Android của bạn đã sẵn sàng. Trước tiên, bạn cần kích hoạt Tùy chọn Nhà phát triển trên thiết bị của mình. Để làm điều này, hãy đi tới **Cài đặt**, sau đó **Giới thiệu về điện thoại**. Cuộn xuống cho đến khi bạn tìm thấy **Số hiệu bản dựng**. Nhấn vào đó bảy lần liên tiếp để mở khóa `Tùy chọn Nhà phát triển`. Bạn sẽ nhận được thông báo xác nhận rằng bạn đã kích hoạt Tùy chọn Nhà phát triển, cung cấp quyền truy cập vào nhiều cài đặt dành cho nhà phát triển.
+
+Tiếp theo, bạn cần kích hoạt Gỡ lỗi USB. Bước này là cần thiết, vì nó cho phép máy tính của bạn giao tiếp với thiết bị Android qua ADB. Quay lại menu **Cài đặt**, sau đó **Tùy chọn nhà phát triển**. Trong danh sách này, tìm mục **Gỡ lỗi USB** và bật nó lên. Bằng cách cho phép gỡ lỗi USB, bạn sẽ thiết lập một đường truyền giao tiếp rất quan trọng cho các bước tiếp theo trong việc thiết lập không dây.
+
+Cuối cùng, kích hoạt gỡ lỗi không dây trên thiết bị Android của bạn là bước quan trọng không thể bỏ qua. Để làm điều này, hãy mở Tùy chọn Nhà phát triển: Vào lại menu Tùy chọn Nhà phát triển và tìm tùy chọn **Gỡ lỗi không dây** hoặc **Gỡ lỗi qua Wi-Fi**. Nhấn vào công tắc để bật tính năng này. Nếu thiết bị của bạn cung cấp tùy chọn "Luôn cho phép trên mạng này", hãy tích vào ô để tiết kiệm thời gian khi bạn kết nối sau này, vì bạn sẽ không phải nhập mã ghép đôi mỗi lần. Khi có thông báo yêu cầu xác nhận, hãy nhấn “Cho phép” để khẳng định quyền truy cập.
+
+Tiếp theo, bạn cần lấy mã ghép đôi Wi-Fi. Truy cập vào Gỡ lỗi không dây: Từ màn hình gỡ lỗi không dây, chọn tùy chọn **Ghép đôi thiết bị với mã ghép đôi**. Một mã ghép đôi, địa chỉ IP và số cổng sẽ xuất hiện. Hãy ghi lại các thông tin này để sử dụng sau. Địa chỉ IP sẽ cho phép bạn kết nối thiết bị Android với máy tính qua mạng không dây. Với những chuẩn bị này hoàn tất, bạn đã sẵn sàng để tiến bước vào các bước tiếp theo của thiết lập gỡ lỗi không dây.
+
+export function ImageRow() {
+    return (
+        <div className="flex justify-evenly">
+            <ImageZoom alt="Gỡ lỗi qua Wifi" src="/posts/huong-dan-debug-khong-day-android-adb/2294d0c976c1d09f89d0.webp" width="300" height="250" />
+            <ImageZoom alt="Ghép nối với thiết bị" src="/posts/huong-dan-debug-khong-day-android-adb/a989fedb58d3fe8da7c2.webp" width="300" height="250" />
+        </div>
+    )
+}
+
+<ImageRow />
+
+## Bước 2: Thiết lập ADB trên Máy tính của bạn
+
+Sau khi thiết bị Android của bạn đã được chuẩn bị, bước tiếp theo là đảm bảo rằng ADB đã được thiết lập trên máy tính của bạn. Cài đặt Android SDK Platform-Tools là điều cần thiết để truy cập các chức năng của ADB. Nếu bạn chưa cài đặt, bạn có thể tải về từ trang web chính thức của nhà phát triển Android. Gói platform-tools chứa tất cả các công cụ bạn cần, bao gồm cả ADB.
+
+Khi tải về xong, hãy giải nén nội dung vào một thư mục bạn chọn. Để kiểm tra xem ADB đã được cài đặt đúng chưa, hãy mở terminal hoặc command prompt và điều hướng đến thư mục mà bạn vừa giải nén. Gõ lệnh `adb version` và nhấn enter. Nếu cài đặt đúng, bạn sẽ thấy phiên bản hiện tại của ADB hiển thị ra terminal của bạn. Điều này khẳng định rằng bạn đã sẵn sàng để sử dụng các lệnh ADB để quản lý thiết bị Android của mình.
+
+Hơn nữa, bạn nên đảm bảo rằng máy tính và thiết bị Android của bạn đều được kết nối vào cùng một mạng Wi-Fi. Cấu hình này là bắt buộc cho việc gỡ lỗi không dây. Nếu cả hai thiết bị không nằm trên cùng một mạng, bạn sẽ không thể thiết lập một kết nối chính xác. Khi bạn xác nhận rằng cả hai thiết bị đều kết nối đúng cách, bạn có thể tiến hành thiết lập kết nối không dây cho gỡ lỗi.
+
+## Bước 3: Kết nối Thiết bị của bạn qua ADB
+
+Bây giờ, bạn cần thực hiện lệnh ghép đôi ADB không dây. Hãy nhập lệnh sau trong terminal hoặc command prompt, thay thế `ipaddress` bằng địa chỉ IP của thiết bị Android và `port` bằng cổng mà bạn đã ghi lại:
+
+```bash
+adb pair <ipaddress>:<port>
+```
+_Example_:
+```bash
+adb pair 192.168.1.103:41083
+Enter pairing code: 794521
+Successfully paired to 192.168.1.103:41083 [guid=adb-R58MC0Z68VN-mpblvP]
+```
+
+Khi lệnh này được thực hiện, hệ thống sẽ yêu cầu bạn nhập mã ghép đôi (pairing code) mà bạn đã ghi lại từ trước. Sau khi bạn nhập mã đó và nhấn Enter, thiết bị của bạn sẽ được ghép đôi với máy tính của bạn, cho phép bạn gửi lệnh ADB không dây.
+
+Sau khi thực hiện bước này, bạn có thể kết nối lại với lệnh sau:
+
+```bash
+adb connect <ipaddress>:<port>
+```
+_Example_:
+```bash
+adb connect 192.168.1.103:46613
+connected to 192.168.1.103:46613
+```
+
+Nếu kết nối thành công, bạn sẽ thấy một thông báo xác nhận. Quy trình này tích hợp việc gỡ lỗi không dây vào quy trình phát triển của bạn và mở ra những con đường mới cho việc thử nghiệm ứng dụng.
+
+## Bước 4: Xác minh kết nối Không dây
+
+Khi bạn đã kết nối thiết bị một cách không dây, điều quan trọng là xác minh rằng kết nối ổn định và hoạt động như mong đợi. Bạn có thể làm điều này bằng cách sử dụng lại lệnh `adb devices`. Nếu mọi thứ được thiết lập đúng cách, bạn nên thấy thiết bị của mình được liệt kê, cho thấy rằng ADB có khả năng giao tiếp với thiết bị Android của bạn qua mạng không dây.
+
+Nếu thiết bị của bạn không xuất hiện trong danh sách hoặc bạn gặp phải bất kỳ vấn đề kết nối nào, hãy đảm bảo rằng thiết bị của bạn vẫn kết nối với cùng một mạng Wi-Fi. Thêm vào đó, kiểm tra xem địa chỉ IP mà bạn đã sử dụng để kết nối có chính xác hay không. Đôi khi, chỉ cần lặp lại lệnh kết nối cũng có thể giải quyết các vấn đề kết nối nhỏ.
+
+Một phương pháp khác để kiểm tra kết nối không dây của bạn là gửi một lệnh ADB đơn giản đến thiết bị của bạn. Ví dụ, bạn có thể thử lệnh `adb shell getprop` để truy xuất các thuộc tính hệ thống từ thiết bị Android của bạn. Nếu bạn nhận được một danh sách các thuộc tính phản hồi, bạn đã thiết lập kết nối không dây thành công và có thể tiến hành các nhiệm vụ gỡ lỗi của mình.
+
+## Bước 5: Run the Wireless ADB Debugging Command
+
+Với việc xác minh kết nối thành công, giờ đây bạn có thể bắt đầu gửi lệnh ADB một cách không dây. Dải lệnh có sẵn qua ADB là rất lớn, cho phép bạn thực hiện các thao tác như cài đặt ứng dụng, gỡ bỏ chúng, và chụp ảnh màn hình. Dưới đây là một số lệnh cơ bản mà bạn có thể sử dụng:
+
+* Xem logs: 
+```bash
+adb logcat
+```
+Lệnh này sẽ hiển thị các thông điệp log từ ứng dụng của bạn, giúp bạn phát hiện và xử lý lỗi.
+
+* Cài đặt ứng dụng: 
+```bash
+adb install <path_file_apk>
+```
+Lệnh này cho phép bạn cài đặt ứng dụng từ file APK vào thiết bị Android của mình.
+
+* Chuyển tệp từ máy tính đến thiết bị:
+```bash
+adb push <path_file_may_tinh> <path_folder_android>
+```
+
+* Sao chép tệp từ thiết bị về máy tính:
+```bash
+adb pull <path_file_android> <path_folder_may_tinh>
+```
+
+Với những lệnh này, bạn có thể quản lý thiết bị Android của mình một cách hiệu quả. Việc gỡ lỗi sẽ trở nên dễ dàng hơn với những lệnh như `adb logcat`, cho phép bạn xem các log thời gian thực từ ứng dụng của mình, hỗ trợ bạn trong việc điều tra và sửa lỗi của ứng dụng.
+
+Ngoài ra, việc cài đặt ứng dụng hay chuyển tệp qua lại giữa máy tính và thiết bị cũng trở nên đơn giản hơn. Hãy nhớ rằng, khi bạn đã kết nối thiết bị không dây qua ADB, bạn có thể thực hiện tất cả những thao tác này mà không cần phải có cáp USB, mang lại sự linh hoạt và tiện lợi cho quá trình phát triển ứng dụng.
+
+## Bước 6: Tối ưu hiệu quả với các ADB Command
+
+Một trong những lợi thế đáng kể của gỡ lỗi không dây là tăng năng suất. Các nhà phát triển thường gặp nhiều sự phân tâm trong một không gian làm việc truyền thống. Bằng cách sử dụng ADB không dây, các nhà phát triển có thể làm việc với thiết bị của họ trong những cài đặt thoải mái hơn, như ngồi trên ghế sofa hoặc đứng trong phòng hội nghị. Tự do này nuôi dưỡng sự sáng tạo và đổi mới, cho phép các nhà phát triển suy nghĩ vượt ra ngoài các không gian thông thường.
+
+Bên cạnh đó, việc sử dụng lệnh ADB không dây cho phép vòng lặp lặp lại nhanh hơn trong quá trình phát triển ứng dụng. Khi bạn gửi lệnh từ máy tính của mình, việc đánh giá sự thay đổi trong ứng dụng trở nên gần như ngay lập tức. Ví dụ, thay vì phải ngắt kết nối và cắm lại thiết bị sau mỗi thay đổi, bạn có thể nhanh chóng kiểm tra hành vi mới, phân tích kết quả và điều chỉnh như cần thiết—all trong khi vẫn giữ kết nối thoải mái.
+
+Hơn nữa, gỡ lỗi không dây khuyến khích sự cộng tác trong phát triển. Các thành viên trong nhóm có thể chia sẻ phản hồi và cái nhìn trong thời gian thực khi họ quan sát hiệu suất ứng dụng cùng nhau mà không cần phải quây quần quanh một thiết bị vật lý. Sự cộng tác này thúc đẩy tính minh bạch và hiệu quả, cuối cùng cải thiện kết quả dự án và sự gắn kết của đội ngũ.
+
+## Bước 7: Khắc phục các vấn đề thường gặp
+
+Mặc dù công nghệ gỡ lỗi không dây cung cấp sự tiện lợi, nhưng cũng có thể xảy ra một số vấn đề, điều mà các nhà phát triển cần dự đoán và khắc phục. Ví dụ, nếu kết nối của bạn đột ngột bị ngắt, hãy đảm bảo rằng thiết bị của bạn vẫn kết nối vào cùng một mạng Wi-Fi. Ngoài ra, hãy kiểm tra xem tường lửa hoặc phần mềm diệt virus trên máy tính của bạn có đang chặn các kết nối ADB hay không.
+
+Nếu bạn nhận thấy thiết bị của mình không phản hồi với các lệnh ADB, có thể bạn nên khởi động lại cả thiết bị Android và máy tính. Điều này thường giải quyết các trục trặc kết nối nhỏ. Ngoài ra, sử dụng lệnh `adb kill-server` tiếp theo là `adb start-server` có thể thiết lập lại kết nối ADB mà không cần khởi động lại hoàn toàn.
+
+Cuối cùng, hãy nhớ rằng nếu bạn thoát ra khỏi shell ADB hoặc kết nối của bạn hết thời gian sau khi không hoạt động, bạn có thể cần kết nối lại bằng cách sử dụng những bước ban đầu đã được mô tả. Đảm bảo rằng bạn duy trì sự chú ý đến những chiến lược khắc phục sự cố này sẽ nâng cao trải nghiệm gỡ lỗi tổng thể của bạn.
+
+## Bước 8: Các cân nhắc về bảo mật
+
+Khi gỡ lỗi không dây cung cấp sự tiện lợi, nó cũng đặt ra những cân nhắc quan trọng về bảo mật. Khi kích hoạt gỡ lỗi không dây, bạn tạo ra một điểm truy cập vào thiết bị của mình, điều này có thể gây ra các lỗ hổng nếu không được quản lý một cách thích hợp. Do đó, rất quan trọng để chỉ kết nối trên các mạng tin cậy và đảm bảo rằng thiết bị phát triển của bạn được bảo vệ đầy đủ.
+
+Để tăng cường bảo mật, hãy xem xét việc vô hiệu hóa gỡ lỗi không dây khi không sử dụng. Sự đề phòng này sẽ giảm thiểu nguy cơ truy cập trái phép. Hơn nữa, hãy luôn cảnh giác và theo dõi mạng của bạn để phát hiện bất kỳ hoạt động đáng ngờ nào hoặc kết nối trái phép. Cần thiết phải cân bằng giữa sự tiện lợi và bảo mật để bảo vệ công việc và dữ liệu cá nhân quý giá của bạn.
+
+Hơn nữa, nếu thiết bị của bạn hỗ trợ, hãy đảm bảo rằng bạn kích hoạt các thiết lập mã hóa. Điều này sẽ thêm một lớp bảo vệ bổ sung cho thiết bị và dữ liệu của nó. Các thói quen an toàn phải trở thành bản năng trong môi trường gỡ lỗi không dây để nuôi dưỡng một hệ sinh thái phát triển hiệu quả và an toàn.
+
+## Kết luận
+
+Tóm lại, việc thiết lập gỡ lỗi không dây trên Android sẽ nâng cao đáng kể khả năng phát triển của bạn. Bằng cách sử dụng lệnh ADB không dây, bạn tinh giản quy trình làm việc của mình, cải thiện khả năng thử nghiệm của bạn và tạo ra một môi trường làm việc linh hoạt hơn. Từ việc thiết lập ban đầu cho đến việc khắc phục các vấn đề thường gặp và xử lý các mối quan tâm về bảo mật, bài viết này đã trang bị cho bạn kiến thức và công cụ cần thiết để phát triển ứng dụng Android hiệu quả.
+
+Khi công nghệ tiếp tục phát triển, việc tiếp nhận các giải pháp không dây sẽ trở nên ngày càng quan trọng trong bối cảnh phát triển phần mềm đang thay đổi. Vì vậy, hãy trang bị cho mình những kỹ năng đã được thảo luận ở đây và đón nhận tương lai của phát triển Android. Với gỡ lỗi không dây và các lệnh ADB trong tay, bạn đã sẵn sàng tạo ra các ứng dụng mạnh mẽ, đổi mới đáp ứng nhu cầu của người dùng hiện đại.
+
+Bằng cách áp dụng những thực tiễn này, bạn không chỉ cải thiện được năng suất mà còn mở đường cho một trải nghiệm phát triển hiệu quả và thú vị hơn. Chúc bạn debug thành công!
