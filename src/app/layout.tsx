@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 		card: 'summary_large_image',
 	},
 	openGraph: {
-		images: '/cover.png',
+		images: '/cover.webp',
 		title: {
 			template: 'Hoàng Văn Giỏi - %s',
 			default: 'Hoàng Văn Giỏi - Blog lưu trữ và chia sẻ kiến thức',

@@ -50,7 +50,7 @@ export function generateMetadata({ params }: { params: { tag: string } }): Metad
 			canonical: `${domain}/tags/${params.tag}`,
 		},
 		openGraph: {
-			images: '/cover.png',
+			images: '/cover.webp',
 			title: `Bài viết được gắn thẻ ${decodedTag}`,
 		},
 	}

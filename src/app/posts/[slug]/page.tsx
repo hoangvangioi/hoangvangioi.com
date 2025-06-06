@@ -69,7 +69,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 			authors: page.data.authors.map((author) => authors[author].name),
 			title: page.data.title,
 			description: page.data.description,
-			images: page.data.image ?? '/cover.png',
+			images: page.data.image ?? '/cover.webp',
 		},
 	}
 }

@@ -24,7 +24,7 @@ export function BlogItem({ page }: { page: Page }) {
 					<div className="flex h-full flex-1 flex-col bg-green-400">
 						<Image
 							alt="image cover"
-							src="/cover.png"
+							src="/cover.webp"
 							className="m-auto h-20 w-20 rounded-full"
 							width={128}
 							height={128}
@@ -67,7 +67,7 @@ export function LargeBlogItem({ page }: { page: Page }) {
 					<div className="flex h-full flex-1 flex-col bg-green-400">
 						<Image
 							alt="image cover"
-							src="/cover.png"
+							src="/cover.webp"
 							className="m-auto h-20 w-20"
 							width={128}
 							height={128}
