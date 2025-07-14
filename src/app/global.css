@@ -2,10 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
-.prose-text :where(h2, h3, h4, h5, h6):not(:where([class~="nd-not-prose"] *)) {
-    @apply font-bold;
+.prose-text :where(h2, h3, h4, h5, h6):not(:where([class~='nd-not-prose'] *)) {
+	@apply font-bold;
 }
 
 .prose {
-    --tw-prose-body: hsl(var(--muted-foreground));
+	--tw-prose-body: hsl(var(--muted-foreground));
+}
+
+/* Custom styles cho mobile navigation */
+@media (max-width: 990px) {
+	/* Ẩn nút menu 3 chấm với nhiều selector khác nhau */
+	button[aria-label='Toggle Menu'],
+	button[aria-label='Menu'],
+	button[aria-label='Open Menu'],
+	button[aria-label='toggle menu'],
+	button[aria-label='Open navigation menu'],
+	button[aria-label='Toggle navigation menu'],
+	button[aria-expanded],
+	button[aria-expanded='false'],
+	button[aria-expanded='true'],
+	.fd-nav-toggle,
+	[data-nav-toggle],
+	[class*='nav-toggle'],
+	[class*='menu-toggle'],
+	[class*='hamburger'],
+	/* Target Fumadocs specific selectors */
+	.fd-nav button:has(.lucide-menu),
+	.fd-nav button:has(.lucide-more-vertical),
+	nav button:has(.lucide-menu),
+	nav button:has(.lucide-more-vertical),
+	/* Target by icon */
+	.lucide-menu,
+	.lucide-more-vertical,
+	.lucide-more-horizontal {
+		display: none !important;
+		visibility: hidden !important;
+		opacity: 0 !important;
+		pointer-events: none !important;
+	}
+
+	/* Force hiển thị theme toggle trực tiếp trong nav bar */
+	nav [data-theme-toggle],
+	header [data-theme-toggle],
+	.fd-nav [data-theme-toggle],
+	nav button[aria-label*='theme'],
+	header button[aria-label*='theme'],
+	.fd-nav button[aria-label*='theme'],
+	button[aria-label*='Theme'],
+	button[aria-label*='dark'],
+	button[aria-label*='light'],
+	.fd-theme-toggle,
+	.theme-toggle,
+	[class*='theme-toggle'],
+	[class*='ThemeToggle'] {
+		display: flex !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+		position: static !important;
+		pointer-events: auto !important;
+		min-width: 40px !important;
+		height: 40px !important;
+		align-items: center !important;
+		justify-content: center !important;
+	}
+
+	/* Ẩn theme toggle trong dropdown để tránh duplicate */
+	.fd-nav-menu [data-theme-toggle],
+	.fd-popover [data-theme-toggle],
+	[role='menu'] [data-theme-toggle],
+	.fd-dropdown [data-theme-toggle] {
+		display: none !important;
+	}
+
+	/* Đảm bảo nav actions container hiển thị đầy đủ */
+	.fd-nav-actions,
+	nav > div:last-child,
+	header > div:last-child,
+	.fd-nav > div:last-child {
+		display: flex !important;
+		align-items: center !important;
+		gap: 0.5rem !important;
+	}
+
+	/* Ẩn dropdown menu hoàn toàn */
+	.fd-nav-menu,
+	.fd-popover[data-state='open'],
+	[role='menu'],
+	.fd-dropdown {
+		display: none !important;
+	}
+
+	/* Override any specific hiding of theme toggle */
+	nav [data-theme-toggle]:not(.fd-nav-menu [data-theme-toggle]) {
+		display: flex !important;
+	}
+
+	/* Force override với higher specificity */
+	html body nav [data-theme-toggle],
+	html body header [data-theme-toggle] {
+		display: flex !important;
+		opacity: 1 !important;
+		visibility: visible !important;
+	}
+
+	/* Force hide menu với higher specificity */
+	html body nav button[aria-expanded],
+	html body .fd-nav button[aria-expanded],
+	html body nav .lucide-menu,
+	html body .fd-nav .lucide-menu {
+		display: none !important;
+	}
 }
