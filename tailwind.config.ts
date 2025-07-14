@@ -20,8 +20,7 @@ export default {
 					'0%': {
 						transform: 'translate(0)',
 					},
-
-					to: {
+					'100%': {
 						transform: 'translateX(calc(-100% - 20px))',
 					},
 				},
