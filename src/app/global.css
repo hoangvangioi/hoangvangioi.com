@@ -11,7 +11,7 @@
 }
 
 /* Custom styles cho mobile navigation */
-@media (max-width: 990px) {
+@media (width <= 64rem) {
 	/* Ẩn nút menu 3 chấm với nhiều selector khác nhau */
 	button[aria-label='Toggle Menu'],
 	button[aria-label='Menu'],
@@ -62,7 +62,7 @@
 		position: static !important;
 		pointer-events: auto !important;
 		min-width: 40px !important;
-		height: 40px !important;
+		height: 34px !important;
 		align-items: center !important;
 		justify-content: center !important;
 	}
