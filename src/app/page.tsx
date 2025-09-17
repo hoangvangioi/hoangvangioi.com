@@ -19,7 +19,12 @@ export default function BlogIndex() {
 	return (
 		<main className="mb-20 flex flex-1 flex-col gap-5">
 			<div className="mb-5 mt-16">
-				<h1 className="mb-8 text-center text-4xl font-bold md:text-5xl">Chia sẻ trải nghiệm của chúng ta</h1>
+				<h1 className="mb-8 text-center text-3xl font-bold md:text-4xl">
+					Hành trang công nghệ
+					<div className="mt-4 text-2xl font-normal md:text-3xl">
+						Nơi lưu giữ và chia sẻ những điều thú vị
+					</div>
+				</h1>
 				<div className="flex flex-row justify-center gap-2.5 max-sm:flex-col max-sm:items-stretch">
 					<LinkButton href="/tags" icon={<EyeIcon className="h-4 w-4" />} variant="primary">
 						Xem tất cả các thẻ
