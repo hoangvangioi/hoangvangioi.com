@@ -19,9 +19,6 @@
 	button[aria-label='toggle menu'],
 	button[aria-label='Open navigation menu'],
 	button[aria-label='Toggle navigation menu'],
-	button[aria-expanded],
-	button[aria-expanded='false'],
-	button[aria-expanded='true'],
 	.fd-nav-toggle,
 	[data-nav-toggle],
 	[class*='nav-toggle'],
@@ -55,7 +52,10 @@
 	.fd-theme-toggle,
 	.theme-toggle,
 	[class*='theme-toggle'],
-	[class*='ThemeToggle'] {
+	[class*='ThemeToggle'],
+	/* Force override với higher specificity */
+	html body nav [data-theme-toggle],
+	html body header [data-theme-toggle] {
 		display: flex !important;
 		opacity: 1 !important;
 		visibility: visible !important;
@@ -93,24 +93,33 @@
 		display: none !important;
 	}
 
-	/* Override any specific hiding of theme toggle */
-	nav [data-theme-toggle]:not(.fd-nav-menu [data-theme-toggle]) {
-		display: flex !important;
-	}
-
-	/* Force override với higher specificity */
-	html body nav [data-theme-toggle],
-	html body header [data-theme-toggle] {
-		display: flex !important;
-		opacity: 1 !important;
-		visibility: visible !important;
-	}
-
 	/* Force hide menu với higher specificity */
-	html body nav button[aria-expanded],
-	html body .fd-nav button[aria-expanded],
+	html body nav button[aria-expanded]:not([aria-controls*='radix']),
+	html body .fd-nav button[aria-expanded]:not([aria-controls*='radix']),
 	html body nav .lucide-menu,
 	html body .fd-nav .lucide-menu {
 		display: none !important;
+	}
+
+	/* Force hiển thị InlineTOC trên mobile */
+	.lg\\:hidden [data-state='closed'] {
+		display: block !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+
+	.lg\\:hidden [data-state='closed'] > div[hidden] {
+		display: block !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+		height: auto !important;
+		overflow: visible !important;
+	}
+
+	/* Override Radix UI animations */
+	.lg\\:hidden .data-\\[state\\='closed\\']\\:animate-collapsible-up {
+		animation: none !important;
+		height: auto !important;
+		overflow: visible !important;
 	}
 }
