@@ -9,7 +9,12 @@ export const AD_CLIENT = process.env.NEXT_PUBLIC_AD_CLIENT ?? ''
 export const AD_SLOT = process.env.NEXT_PUBLIC_AD_SLOT ?? ''
 export const ADSFIXED_S = process.env.NEXT_PUBLIC_ADSFIXED_S ?? ''
 export const ADSFIXED_L = process.env.NEXT_PUBLIC_ADSFIXED_L ?? ''
-export const MONETAG = process.env.NEXT_PUBLIC_MONETAG ?? ''
+// Monetag Configuration
+export const MONETAG = {
+	META_TAG: process.env.NEXT_PUBLIC_MONETAG_META_TAG ?? '',
+	ZONE_ID: process.env.NEXT_PUBLIC_MONETAG_ZONE_ID ?? '',
+	SCRIPT_URL: process.env.NEXT_PUBLIC_MONETAG_SCRIPT_URL ?? '',
+}
 
 export const urlBase = new URL(SITE_URL)
 

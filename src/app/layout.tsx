@@ -51,7 +51,7 @@ export const metadata: Metadata = {
 	icons: { icon: '/icon.png', apple: '/apple-icon.png' },
 	appleWebApp: { capable: true, title: 'Hoàng Văn Giỏi', statusBarStyle: 'default' },
 	other: {
-		monetag: MONETAG,
+		monetag: MONETAG.META_TAG,
 	},
 }
 
@@ -68,6 +68,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="vi" className={inter.className} suppressHydrationWarning>
+			<head>
+				<script src={MONETAG.SCRIPT_URL} data-zone={MONETAG.ZONE_ID} async data-cfasync="false"></script>
+			</head>
 			<body className="flex min-h-screen flex-col">
 				<AdsProvider>
 					<DocsProvider>
