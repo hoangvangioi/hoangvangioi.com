@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import { AdsProvider } from '@/adsense'
 import { DocsProvider } from '@/app/provider'
 import Footer from '@/components/Footer'
-import { GITHUB_USER, footer, urlBase } from '@config'
+import { GITHUB_USER, footer, urlBase, MONETAG } from '@config'
 import type { Metadata, Viewport } from 'next'
 import { DocsLayout } from 'fumadocs-ui/layout'
 import { utils } from '@/utils/source'
@@ -50,6 +50,9 @@ export const metadata: Metadata = {
 	},
 	icons: { icon: '/icon.png', apple: '/apple-icon.png' },
 	appleWebApp: { capable: true, title: 'Hoàng Văn Giỏi', statusBarStyle: 'default' },
+	other: {
+		monetag: MONETAG,
+	},
 }
 
 export const viewport: Viewport = {

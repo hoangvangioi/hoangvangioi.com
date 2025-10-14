@@ -9,6 +9,7 @@ export const AD_CLIENT = process.env.NEXT_PUBLIC_AD_CLIENT ?? ''
 export const AD_SLOT = process.env.NEXT_PUBLIC_AD_SLOT ?? ''
 export const ADSFIXED_S = process.env.NEXT_PUBLIC_ADSFIXED_S ?? ''
 export const ADSFIXED_L = process.env.NEXT_PUBLIC_ADSFIXED_L ?? ''
+export const MONETAG = process.env.NEXT_PUBLIC_MONETAG ?? ''
 
 export const urlBase = new URL(SITE_URL)
 
