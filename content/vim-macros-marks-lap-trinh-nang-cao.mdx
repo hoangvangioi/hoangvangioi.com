@@ -1,0 +1,153 @@
+---
+title: 'Vim Editor #3: Macros, Marks và Tự Động Hóa Vim'
+description: 'Hướng dẫn sử dụng Macros để ghi lại thao tác, Marks để đánh dấu vị trí, và các lệnh chuyên dụng cho lập trình viên như %, ci", thụt lề trong Vim.'
+authors: ['gioi']
+tags: ['vim', 'editor']
+date: '2025-09-18T12:00:00.000Z'
+image: '/posts/vim-macros-marks-lap-trinh-nang-cao/cover.webp'
+---
+
+![banner](/posts/vim-macros-marks-lap-trinh-nang-cao/cover.webp)
+
+<Info title="Tóm tắt nhanh">
+	Bài viết này khám phá các kỹ thuật nâng cao trong Vim, tập trung vào việc tự động hóa các tác vụ lặp đi lặp lại bằng
+	Macros, điều hướng hiệu quả trong các tệp lớn bằng Marks và Jumps, cùng với các lệnh chuyên dụng giúp tăng tốc quá
+	trình lập trình.
+</Info>
+
+## 1. Giới thiệu
+
+Sau khi đã nắm vững các thao tác di chuyển và chỉnh sửa cơ bản, bước tiếp theo để khai thác toàn bộ sức mạnh của Vim là học cách tự động hóa và điều hướng một cách thông minh. Macros cho phép ghi lại và tái sử dụng một chuỗi các hành động phức tạp, trong khi Marks hoạt động như những chiếc "bookmark" giúp bạn di chuyển tức thì đến các vị trí quan trọng trong mã nguồn.
+
+Bài viết này sẽ hướng dẫn chi tiết về:
+
+-   Cách ghi và thực thi Macros để xử lý các tác vụ lặp lại.
+-   Cách sử dụng Marks và Jump List để điều hướng nhanh chóng.
+-   Các lệnh và motion hữu ích dành riêng cho lập trình viên.
+
+Đây là những kỹ năng nâng cao nhưng vô cùng giá trị, giúp tiết kiệm thời gian và giảm thiểu các thao tác thủ công nhàm chán.
+
+## 2. Ghi và Thực Thi Chuỗi Lệnh với Macros
+
+Trong khi lệnh `.` (dot) chỉ có thể lặp lại _một_ thay đổi gần nhất, macros cho phép ghi lại và thực thi một chuỗi không giới hạn các hành động, từ di chuyển, chỉnh sửa, chèn văn bản cho đến thực thi các lệnh khác.
+
+<Steps>
+
+<Step>
+
+### Ghi một Macro
+
+1.  **Bắt đầu ghi:** Nhấn `q` theo sau bởi một ký tự dùng làm tên cho thanh ghi (register), ví dụ từ `a` đến `z`. Ví dụ, để bắt đầu ghi vào thanh ghi `a`, nhấn `qa`. Lúc này, bạn sẽ thấy thông báo "recording @a" ở dưới cùng màn hình.
+2.  **Thực hiện chuỗi hành động:** Thực hiện tất cả các thao tác bạn muốn ghi lại. Mọi thứ bạn gõ (trừ một vài ngoại lệ) sẽ được ghi lại, bao gồm di chuyển, xóa, chèn, tìm kiếm, v.v..
+3.  **Dừng ghi:** Nhấn `q` một lần nữa để kết thúc quá trình ghi.
+
+<Warning title="Lưu ý khi ghi Macro">
+	Các hành động hoàn tác (`u`) và làm lại (`Ctrl+r`) có thể gây ra lỗi hoặc hành vi không mong muốn khi được ghi trong
+	macro. Nếu bạn mắc lỗi, cách tốt nhất là dừng macro (`q`), hoàn tác các thay đổi, và bắt đầu ghi lại từ đầu.
+</Warning>
+
+</Step>
+
+<Step>
+
+### Thực thi Macro
+
+-   **Thực thi một lần:** Nhấn `@` theo sau bởi tên thanh ghi đã dùng để ghi. Ví dụ: `@a`.
+-   **Thực thi nhiều lần:** Thêm một con số phía trước lệnh. Ví dụ, để thực thi macro trong thanh ghi `j` 18 lần, gõ `18@j`.
+
+</Step>
+
+<Step>
+
+### Ví dụ thực tế - Chuyển đổi danh sách Text thành đối tượng JavaScript
+
+Giả sử bạn sao chép một danh sách các mã trạng thái HTTP từ tài liệu và muốn chuyển đổi nó thành một đối tượng JavaScript.
+
+**Dữ liệu đầu vào:**
+
+```
+100 Continue:
+200 OK:
+302 Found (Previously "Moved Temporarily"):
+...
+```
+
+**Kết quả mong muốn:**
+
+```javascript
+{
+  "100": "Continue",
+  "200": "OK",
+  "302": "Found (Previously \"Moved Temporarily\")",
+  ...
+}
+```
+
+**Macro để thực hiện (ghi vào thanh ghi `j`):**
+
+1.  **Bắt đầu ghi:** `qj`
+2.  **Di chuyển xuống dòng:** `+` (đến dòng đầu tiên cần xử lý)
+3.  **Chèn dấu ngoặc kép ở đầu dòng:** `I"` → `Escape`
+4.  **Thêm `": ` sau mã số:** `EA": ` → `Escape`
+5.  **Chèn dấu ngoặc kép trước mô tả:** `wI"` → `Escape`
+6.  **Tìm dấu `:` cuối dòng:** `/:\s*$` → `Enter`
+7.  **Thay thế `:` bằng `",`:** `s",` → `Escape`
+8.  **Dừng ghi:** `q`
+
+Sau khi ghi xong, bạn chỉ cần chạy lệnh `18@j` (giả sử có 18 dòng cần xử lý) để tự động định dạng toàn bộ danh sách.
+
+</Step>
+</Steps>
+
+## 3. Đánh Dấu và Điều Hướng Nhanh với Marks & Jumps
+
+Marks hoạt động như các "bookmark" nội bộ, cho phép bạn đánh dấu một vị trí cụ thể và quay lại đó ngay lập tức từ bất kỳ đâu trong tệp.
+
+<Steps>
+
+<Step>
+
+### Tạo và Di chuyển đến Marks
+
+-   **Tạo một Mark:** Ở Chế độ Thường, nhấn `m` theo sau bởi một ký tự (ví dụ `ma`, `m1`) để tạo một mark tại vị trí con trỏ. Lưu ý: marks KHÔNG chia sẻ bộ nhớ với thanh ghi yank; chúng là hệ thống tách biệt.
+-   **Di chuyển đến Mark:**
+    -   `` ` `` (dấu huyền) + tên mark: Nhảy chính xác đến vị trí (dòng và cột) của mark. Ví dụ: `` `a ``.
+    -   `'` (nháy đơn) + tên mark: Nhảy đến đầu dòng chứa mark. Ví dụ: `'a`.
+
+</Step>
+
+<Step>
+
+### Sử dụng Jump List để quay lại vị trí trước đó
+
+Vim duy trì một danh sách các "bước nhảy" (jumps) mà bạn đã thực hiện, ví dụ như di chuyển đến một mark.
+
+-   **`Ctrl+O`**: Quay lại vị trí _trước đó_ trong jump list.
+-   **`Ctrl+I`**: Tiến tới vị trí _tiếp theo_ trong jump list.
+
+Quy trình làm việc phổ biến là: đang chỉnh sửa ở một nơi, đặt một mark, nhảy đến một hàm khác để tham khảo, sau đó nhấn `Ctrl+O` để quay lại chính xác vị trí đang làm việc dang dở.
+
+</Step>
+</Steps>
+
+## 4. Các Lệnh Hữu Ích Cho Lập Trình Viên
+
+Vim cung cấp nhiều lệnh được thiết kế đặc biệt để làm việc với mã nguồn.
+
+-   **Nhảy giữa các dấu ngoặc khớp nhau (`%`):** Đặt con trỏ lên một dấu `(`, `)`, `{`, `}`, `[`, hoặc `]` và nhấn `%` để nhảy đến dấu ngoặc tương ứng. Rất hữu ích để kiểm tra phạm vi của một khối mã hoặc tìm lỗi thiếu/thừa dấu ngoặc.
+-   **Thay đổi nội dung bên trong (`ci`):**
+    -   `ci"`: Thay đổi nội dung bên trong cặp dấu `""`.
+    -   `ci(`: Thay đổi nội dung bên trong cặp dấu `()`.
+    -   `ci{`: Thay đổi nội dung bên trong cặp dấu `{}`.
+    -   `cit`: Thay đổi nội dung bên trong một cặp thẻ HTML/XML.
+-   **Bình luận mã (`gc`):**
+    -   `gcc`: Tự động thêm/xóa bình luận cho dòng hiện tại.
+    -   `gc{motion}`: Áp dụng trên một vùng, ví dụ `gc9j` để bình luận 9 dòng phía dưới. Lệnh này nhận diện ngôn ngữ lập trình và sử dụng đúng cú pháp bình luận.
+-   **Thụt lề (`<` và `>`):**
+    -   `>>`: Tăng thụt lề cho dòng hiện tại.
+    -   `<<`: Giảm thụt lề cho dòng hiện tại.
+    -   Kết hợp với Visual Mode để thụt lề cả một khối mã.
+-   **Tăng/giảm số (`Ctrl+A` và `Ctrl+X`):**
+    -   `Ctrl+A`: Tìm số gần nhất trên dòng và tăng giá trị của nó lên 1.
+    -   `Ctrl+X`: Tìm số gần nhất trên dòng và giảm giá trị của nó đi 1.
+    -   Có thể kết hợp với một số đếm, ví dụ `10<C-a>` để tăng giá trị lên 10.
