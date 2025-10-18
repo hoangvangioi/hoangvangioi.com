@@ -1,0 +1,187 @@
+---
+title: 'Vim Editor #2: Tìm Kiếm và Chỉnh Sửa Khối trong Vim'
+description: 'Làm chủ các lệnh tìm kiếm, Visual Mode, và lệnh thay thế (substitute) trong Vim để điều hướng và chỉnh sửa mã nguồn với tốc độ vượt trội.'
+authors: ['gioi']
+tags: ['vim', 'editor']
+date: '2025-09-18T11:00:00.000Z'
+image: '/posts/ky-thuat-tim-kiem-va-chinh-sua-khoi-nang-cao-vim/cover.webp'
+---
+
+![banner](/posts/ky-thuat-tim-kiem-va-chinh-sua-khoi-nang-cao-vim/cover.webp)
+
+<Info title="Tóm tắt nhanh">
+	Bài viết này cung cấp một hướng dẫn chuyên sâu về các tính năng tìm kiếm mạnh mẽ, các chế độ Visual Mode, và lệnh
+	thay thế (substitute) trong Vim. Đây là những công cụ thiết yếu giúp tăng tốc độ điều hướng và chỉnh sửa văn bản,
+	đặc biệt là trong các tệp mã nguồn lớn.
+</Info>
+
+## 1. Giới thiệu
+
+Vượt ra ngoài các lệnh di chuyển cơ bản, Vim cung cấp một bộ công cụ nâng cao để định vị và thao tác trên các vùng văn bản lớn một cách hiệu quả. Khả năng tìm kiếm của Vim không chỉ dừng lại ở việc tìm một chuỗi ký tự, mà còn có thể được kết hợp với các lệnh chỉnh sửa để thực hiện thay đổi phức tạp. Tương tự, Visual Mode biến các thao tác trên khối văn bản trở nên trực quan và mạnh mẽ.
+
+Bài viết này sẽ giúp bạn:
+
+-   Thực hiện tìm kiếm xuôi, ngược và điều hướng giữa các kết quả.
+-   Sử dụng Visual Mode (dạng dòng và khối) để chọn và chỉnh sửa văn bản.
+-   Áp dụng lệnh `substitute` để tìm và thay thế văn bản một cách linh hoạt.
+-   Kết hợp các kỹ thuật này để tạo ra một quy trình làm việc hiệu quả.
+
+## 2. Tìm Kiếm: Không Chỉ Là Điều Hướng
+
+Tìm kiếm là một trong những tính năng được sử dụng thường xuyên nhất trong Vim, không chỉ để tìm kiếm mà còn là một công cụ "motion" (di chuyển) cực kỳ mạnh mẽ.
+
+<Steps>
+
+<Step>
+
+### Tìm kiếm xuôi, ngược và di chuyển
+
+-   **Tìm kiếm xuôi (Forward Search):** Sử dụng phím `/`. Gõ `/` theo sau bởi từ khóa bạn muốn tìm và nhấn `Enter`. Con trỏ sẽ nhảy đến kết quả khớp đầu tiên từ vị trí hiện tại xuống cuối tệp.
+
+    **Ví dụ:**
+
+    ```bash
+    /usb_stick
+    ```
+
+-   **Tìm kiếm ngược (Backward Search):** Sử dụng phím `?`. Tương tự như tìm kiếm xuôi nhưng theo hướng từ vị trí hiện tại lên đầu tệp.
+-   **Di chuyển giữa các kết quả:**
+    -   `n` (next): Nhảy tới kết quả khớp tiếp theo theo cùng chiều tìm kiếm.
+    -   `N` (Next, ngược chiều): Nhảy tới kết quả khớp trước đó (ngược chiều tìm kiếm).
+
+</Step>
+
+<Step>
+
+### Tìm kiếm nhanh từ dưới con trỏ
+
+Để tìm nhanh các lần xuất hiện khác của từ ngay dưới con trỏ mà không cần gõ lại:
+
+-   `*` (asterisk): Tìm kiếm xuôi từ dưới con trỏ.
+-   `#` (hash): Tìm kiếm ngược từ dưới con trỏ.
+
+Sau khi nhấn `*` hoặc `#`, bạn có thể tiếp tục dùng `n` và `N` để di chuyển.
+
+</Step>
+
+<Step>
+
+### Kết hợp Tìm kiếm với Lệnh Chỉnh Sửa
+
+Đây là lúc sức mạnh thực sự của Vim được thể hiện. Bạn có thể coi một lượt tìm kiếm như một lệnh "motion".
+
+-   **Xóa đến một từ khóa:** `d/pattern` sẽ xóa từ vị trí con trỏ đến khi bắt đầu từ khóa `pattern`.
+
+    **Ví dụ:**
+
+    ```bash
+    # Xóa mọi thứ từ vị trí hiện tại đến từ "chunks"
+    d/chunks
+    ```
+
+-   **Thay đổi đến một từ khóa:** `c/pattern` sẽ xóa văn bản như trên và đưa bạn vào Chế độ Chèn.
+
+    **Ví dụ:**
+
+    ```bash
+    # Thay đổi mọi thứ đến từ "tasks"
+    c/tasks
+    ```
+
+<Tip title="Tối ưu hóa hiển thị">
+	Để các kết quả tìm kiếm luôn được tô sáng, hãy bật tùy chọn `hlsearch`. Thêm vào đó, việc tùy chỉnh màu sắc cho kết
+	quả tìm kiếm giúp tăng cường khả năng nhận diện, đặc biệt là kết quả khớp gần nhất với con trỏ.
+</Tip>
+
+</Step>
+</Steps>
+
+## 3. Visual Mode: Chỉnh Sửa Trực Quan
+
+Visual Mode cho phép bạn chọn một vùng văn bản và áp dụng lệnh lên toàn bộ vùng đó, tương tự như việc bôi đen bằng chuột trong các trình soạn thảo khác.
+
+<Steps>
+
+<Step>
+
+### Visual Mode (Dạng Ký Tự)
+
+-   **Kích hoạt:** Nhấn `v` ở Chế độ Thường.
+-   **Cách dùng:** Sau khi nhấn `v`, di chuyển con trỏ bằng các lệnh motion (`h, j, k, l, w, b, $`, v.v.) để mở rộng vùng chọn theo ký tự.
+-   **Thao tác trên vùng chọn:**
+    -   `d` hoặc `x`: Xóa vùng đã chọn.
+    -   `y`: Sao chép (yank) vùng đã chọn.
+    -   `J` (viết hoa): Nối tất cả các dòng trong vùng chọn thành một dòng.
+    -   `~`: Đảo ngược viết hoa/viết thường cho vùng đã chọn.
+    -   `>`: Tăng cấp thụt lề (indent).
+    -   `<`: Giảm cấp thụt lề.
+
+</Step>
+
+<Step>
+
+### Visual Line Mode (Dạng Dòng)
+
+-   **Kích hoạt:** Nhấn `V` (viết hoa) ở Chế độ Thường.
+-   **Cách dùng:** Vùng chọn mở rộng theo từng dòng trọn vẹn, phù hợp khi thao tác trên nhiều dòng.
+-   **Thao tác trên vùng chọn:** giống phần trên.
+
+### Visual Block Mode (Dạng Khối)
+
+Đây là tính năng cực kỳ mạnh mẽ, cho phép chọn văn bản theo một khối hình chữ nhật, tương tự như tính năng đa con trỏ (multiple cursors).
+
+-   **Kích hoạt:** Nhấn `Ctrl+V` ở Chế độ Thường.
+-   **Cách dùng:** Sau khi kích hoạt, di chuyển con trỏ để tạo một khối chọn hình chữ nhật.
+-   **Thao tác trên khối:**
+    -   **Chèn ở đầu khối:** Nhấn `I` (viết hoa), gõ nội dung cần chèn, sau đó nhấn `Escape`. Nội dung sẽ được chèn vào đầu mỗi dòng trong khối.
+    -   **Nối vào cuối khối:** Nhấn `A` (viết hoa), gõ nội dung, sau đó nhấn `Escape`. Nội dung sẽ được nối vào cuối mỗi dòng trong khối.
+    -   **Thay thế khối:** Nhấn `r` theo sau bởi một ký tự. Tất cả các ký tự trong khối sẽ được thay thế bằng ký tự đó.
+
+</Step>
+</Steps>
+
+## 4. Lệnh `substitute`: Tìm và Thay thế
+
+Lệnh `:substitute` (viết tắt là `:s`) là công cụ tìm và thay thế tiêu chuẩn của Vim.
+
+<Steps>
+<Step>
+
+### Cú pháp cơ bản
+
+-   **Thay thế lần đầu tiên trên dòng hiện tại:**
+    ```bash
+    :s/VimScript/JavaScript/
+    ```
+-   **Thay thế tất cả trên dòng hiện tại (Global):** Thêm cờ `g` ở cuối.
+    ```bash
+    :s/book/novel/g
+    ```
+-   **Thay thế tất cả trong toàn bộ tệp:** Sử dụng `%` để chỉ định phạm vi là toàn bộ tệp.
+    ```bash
+    :%s/book/novel/g
+    ```
+
+</Step>
+<Step>
+
+### Thay thế trong vùng chọn Visual Mode
+
+Đây là cách kết hợp linh hoạt nhất, cho phép bạn chỉ thay thế trong một vùng văn bản cụ thể.
+
+1.  Vào Visual Mode (`v` hoặc `Ctrl+V`) và chọn vùng văn bản bạn muốn.
+2.  Nhấn `:` để vào chế độ dòng lệnh. Vim sẽ tự động điền vào phạm vi `:'<,'>`.
+3.  Nhập lệnh `substitute` như bình thường.
+    ```bash
+    :'<,'>s/book/novel/g
+    ```
+    Thao tác này đảm bảo rằng việc thay thế chỉ ảnh hưởng đến vùng bạn đã chọn, tránh các thay đổi không mong muốn ở nơi khác trong tệp.
+
+</Step>
+</Steps>
+
+## 5. Tổng kết và gợi ý tiếp theo
+
+Thành thạo tìm kiếm, Visual Mode và lệnh `substitute` sẽ thay đổi hoàn toàn cách bạn tương tác với văn bản trong Vim. Thay vì thực hiện các chỉnh sửa lặp đi lặp lại một cách thủ công, bạn có thể ra lệnh cho Vim thực hiện chúng một cách chính xác và nhanh chóng.
+
+Hãy dành thời gian luyện tập kết hợp các kỹ thuật này: tìm một từ khóa bằng `/`, nhảy đến các kết quả bằng `n`, chọn một đoạn bằng Visual Mode, và thực hiện thay thế hàng loạt bằng `:s`.
