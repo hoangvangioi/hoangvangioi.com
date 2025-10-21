@@ -1,0 +1,386 @@
+---
+title: 'Lập trình C cơ bản: Biến, Kiểu dữ liệu và Toán tử cho người mới bắt đầu'
+description: 'Khám phá các khái niệm nền tảng trong lập trình C, bao gồm cách khai báo biến, các kiểu dữ liệu cơ bản, hằng số và những toán tử phổ biến nhất.'
+authors: [gioi]
+date: '2025-10-19T14:37:05.000Z'
+tags: ['C', 'Programming', 'Variables', 'Data Types']
+image: '/posts/c-programming-fundamentals-basics/cover.webp'
+---
+
+![banner](/posts/c-programming-fundamentals-basics/cover.webp)
+
+<Info title="Tóm tắt kiến thức">
+Bài viết này đi sâu vào các thành phần cốt lõi của lập trình C: biến (variables), các kiểu dữ liệu (data types), toán tử (operators), và hằng số (constants). Nắm vững những khái niệm này là bước đầu tiên để xây dựng các chương trình C hiệu quả.
+</Info>
+
+Ngôn ngữ lập trình C là một trong những ngôn ngữ lập trình phổ biến và mạnh mẽ nhất, được sử dụng rộng rãi trong phát triển hệ thống, lập trình nhúng và nhiều ứng dụng khác. Được phát triển bởi Dennis Ritchie tại Bell Labs vào năm 1972, C là một ngôn ngữ cấp trung, kết hợp các tính năng của ngôn ngữ cấp cao và khả năng kiểm soát phần cứng của ngôn ngữ cấp thấp.
+
+<Adsense />
+
+## Cấu trúc một chương trình C
+
+Mọi chương trình C đều tuân theo một cấu trúc cơ bản, lấy hàm `main()` làm trung tâm thực thi.
+
+```c title="Cấu trúc chương trình C"
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+```
+
+-   **`#include <stdio.h>`:** Một chỉ thị tiền xử lý, dùng để nạp thư viện `stdio.h` (Standard Input/Output) vào chương trình. Thư viện này cung cấp các hàm thiết yếu như `printf()` để in ra màn hình.
+-   **`int main()`:** Hàm chính nơi quá trình thực thi chương trình bắt đầu.
+-   **`return 0;`:** Câu lệnh kết thúc hàm `main`, trả về giá trị `0` để báo cho hệ điều hành rằng chương trình đã chạy xong mà không gặp lỗi.
+
+## Biến và Kiểu dữ liệu
+
+Biến là tên gọi đại diện cho một vùng nhớ trong máy tính, dùng để lưu trữ dữ liệu. Mỗi biến trong C phải có một kiểu dữ liệu cụ thể, quyết định loại giá trị mà nó có thể chứa và dung lượng bộ nhớ mà nó chiếm dụng.
+
+### Khai báo và khởi tạo biến
+
+Để sử dụng một biến, trước tiên nó phải được khai báo. Bạn cũng có thể gán cho nó một giá trị ban đầu ngay khi khai báo.
+
+```c title="Khai báo và khởi tạo biến"
+// Khai báo biến 'age' kiểu số nguyên và gán giá trị 25
+int age = 25;
+
+// Khai báo biến 'height' kiểu số thực và gán giá trị 1.75
+float height = 1.75;
+
+// Khai báo biến 'grade' kiểu ký tự và gán giá trị 'A'
+char grade = 'A';
+
+// Khai báo biến 'salary' kiểu số thực có độ chính xác cao
+double salary = 50000.50;
+```
+
+### Các kiểu dữ liệu cơ bản
+
+| Kiểu dữ liệu | Kích thước (Bytes) | Phạm vi giá trị                  |
+| :----------- | :----------------- | :------------------------------- |
+| `char`       | 1                  | -128 đến 127                     |
+| `int`        | 4                  | -2,147,483,648 đến 2,147,483,647 |
+| `float`      | 4                  | Khoảng 3.4E-38 đến 3.4E+38       |
+| `double`     | 8                  | Khoảng 1.7E-308 đến 1.7E+308     |
+
+<Adsense />
+
+## Toán tử trong C
+
+Toán tử là các ký hiệu đặc biệt thực hiện các phép toán trên biến và giá trị.
+
+<Tabs items={['Toán tử số học', 'Toán tử so sánh', 'Toán tử logic']}>
+<Tab value="Toán tử số học">
+Dùng để thực hiện các phép tính toán học cơ bản.
+
+```c title="Ví dụ toán tử số học"
+int a = 10, b = 3;
+
+int sum = a + b;        // Phép cộng: 13
+int diff = a - b;       // Phép trừ: 7
+int product = a * b;    // Phép nhân: 30
+int quotient = a / b;   // Phép chia nguyên: 3
+int remainder = a % b;  // Phép chia lấy dư: 1
+```
+
+</Tab>
+<Tab value="Toán tử so sánh">
+Dùng để so sánh hai giá trị và trả về kết quả là `1` (đúng) hoặc `0` (sai).
+
+```c title="Ví dụ toán tử so sánh"
+int x = 5, y = 3;
+x > y;   // Lớn hơn: true (1)
+x < y;   // Nhỏ hơn: false (0)
+x == y;  // Bằng: false (0)
+x != y;  // Không bằng: true (1)
+```
+
+</Tab>
+<Tab value="Toán tử logic">
+Dùng để kết hợp các biểu thức điều kiện.
+
+```c title="Ví dụ toán tử logic"
+int a = 1; // true
+int b = 0; // false
+a && b;  // AND logic: false (0)
+a || b;  // OR logic: true (1)
+!a;      // NOT logic: false (0)
+```
+
+</Tab>
+</Tabs>
+
+## Nhập và xuất dữ liệu
+
+### Xuất dữ liệu với `printf()`
+
+Hàm `printf()` cho phép in dữ liệu ra màn hình với các định dạng khác nhau.
+
+```c title="Ví dụ về printf()"
+int age = 25;
+float height = 1.75;
+char name[] = "John";
+
+printf("Tên: %s\n", name);
+printf("Tuổi: %d\n", age);
+printf("Chiều cao: %.2f\n", height);
+```
+
+### Nhập dữ liệu với `scanf()`
+
+Hàm `scanf()` được sử dụng để đọc dữ liệu do người dùng nhập từ bàn phím.
+
+```c title="Ví dụ về scanf()"
+int age;
+float height;
+char name[50];
+
+printf("Nhập tên: ");
+scanf("%s", name);
+printf("Nhập tuổi: ");
+scanf("%d", &age);
+printf("Nhập chiều cao: ");
+scanf("%f", &height);
+```
+
+<Warning title="Rủi ro khi dùng scanf('%s')">
+Sử dụng `scanf("%s", name)` rất nguy hiểm vì nó không giới hạn số lượng ký tự đọc vào. Nếu người dùng nhập một chuỗi dài hơn kích thước của mảng `name`, lỗi tràn bộ đệm (buffer overflow) sẽ xảy ra. Nên sử dụng các hàm an toàn hơn như `fgets()` để đọc chuỗi.
+</Warning>
+
+## Hằng số (Constants)
+
+Hằng số là các giá trị không thể thay đổi trong suốt quá trình thực thi chương trình.
+
+```c title="Định nghĩa hằng số"
+// Sử dụng chỉ thị #define
+#define PI 3.14159
+#define MAX_SIZE 100
+
+// Sử dụng từ khóa 'const'
+const int MAX_STUDENTS = 50;
+```
+
+<Tip title="`#define` vs `const`">
+`#define` là một chỉ thị tiền xử lý, nó chỉ đơn giản là thay thế văn bản trước khi biên dịch. Trong khi đó, `const` tạo ra một biến thực sự có kiểu dữ liệu và chỉ có thể đọc, giúp trình biên dịch kiểm tra kiểu tốt hơn và an toàn hơn.
+</Tip>
+
+<Adsense />
+
+## Ví dụ thực tế: Chương trình Calculator đơn giản
+
+```c title="Chương trình Calculator"
+#include <stdio.h>
+
+int main() {
+    float num1, num2, result;
+    char operator;
+
+    printf("Nhập số thứ nhất: ");
+    scanf("%f", &num1);
+
+    printf("Nhập phép toán (+, -, *, /): ");
+    scanf(" %c", &operator);
+
+    printf("Nhập số thứ hai: ");
+    scanf("%f", &num2);
+
+    switch(operator) {
+        case '+':
+            result = num1 + num2;
+            break;
+        case '-':
+            result = num1 - num2;
+            break;
+        case '*':
+            result = num1 * num2;
+            break;
+        case '/':
+            if(num2 != 0) {
+                result = num1 / num2;
+            } else {
+                printf("Lỗi: Chia cho 0!\n");
+                return 1;
+            }
+            break;
+        default:
+            printf("Phép toán không hợp lệ!\n");
+            return 1;
+    }
+
+    printf("Kết quả: %.2f %c %.2f = %.2f\n", num1, operator, num2, result);
+
+    return 0;
+}
+```
+
+## Ví dụ thực hành
+
+### 1. Tính chu vi và diện tích hình chữ nhật
+
+```c
+#include <stdio.h>
+
+int main() {
+    float length, width, perimeter, area;
+
+    printf("Nhap chieu dai: ");
+    scanf("%f", &length);
+    printf("Nhap chieu rong: ");
+    scanf("%f", &width);
+
+    // Tính chu vi: P = 2 * (dài + rộng)
+    perimeter = 2 * (length + width);
+    
+    // Tính diện tích: S = dài * rộng
+    area = length * width;
+
+    printf("Chu vi hinh chu nhat: %.2f\n", perimeter);
+    printf("Dien tich hinh chu nhat: %.2f\n", area);
+
+    return 0;
+}
+```
+
+### 2. Giải phương trình bậc 1: ax + b = 0
+
+```c
+#include <stdio.h>
+
+int main() {
+    float a, b, x;
+
+    printf("Nhap he so a: ");
+    scanf("%f", &a);
+    printf("Nhap he so b: ");
+    scanf("%f", &b);
+
+    if (a == 0) {
+        if (b == 0) {
+            printf("Phuong trinh co vo so nghiem\n");
+        } else {
+            printf("Phuong trinh vo nghiem\n");
+        }
+    } else {
+        x = -b / a;
+        printf("Nghiem cua phuong trinh %.2fx + %.2f = 0 la: %.2f\n", a, b, x);
+    }
+
+    return 0;
+}
+```
+
+### 3. Tính tổng các chữ số của một số có 3 chữ số
+
+```c
+#include <stdio.h>
+
+int main() {
+    int number, digit1, digit2, digit3, sum;
+
+    printf("Nhap so co 3 chu so: ");
+    scanf("%d", &number);
+
+    // Tách các chữ số
+    digit1 = number / 100;        // Chữ số hàng trăm
+    digit2 = (number / 10) % 10;  // Chữ số hàng chục
+    digit3 = number % 10;         // Chữ số hàng đơn vị
+
+    // Tính tổng
+    sum = digit1 + digit2 + digit3;
+
+    printf("So vua nhap: %d\n", number);
+    printf("Chu so hang tram: %d\n", digit1);
+    printf("Chu so hang chuc: %d\n", digit2);
+    printf("Chu so hang don vi: %d\n", digit3);
+    printf("Tong cac chu so: %d\n", sum);
+
+    return 0;
+}
+```
+
+### 4. Hoán vị hai số nguyên
+
+```c
+#include <stdio.h>
+
+int main() {
+    int a, b, temp;
+
+    printf("Nhap so thu nhat: ");
+    scanf("%d", &a);
+    printf("Nhap so thu hai: ");
+    scanf("%d", &b);
+
+    printf("Truoc khi hoan vi: a = %d, b = %d\n", a, b);
+
+    // Hoán vị sử dụng biến tạm
+    temp = a;
+    a = b;
+    b = temp;
+
+    printf("Sau khi hoan vi: a = %d, b = %d\n", a, b);
+
+    return 0;
+}
+```
+
+### 5. Chương trình quản lý điểm số học sinh
+
+```c
+#include <stdio.h>
+
+int main() {
+    char name[50];
+    float math, physics, chemistry, average;
+
+    printf("=== QUAN LY DIEM HOC SINH ===\n");
+    
+    printf("Nhap ten hoc sinh: ");
+    fgets(name, sizeof(name), stdin);
+    // Loại bỏ ký tự newline
+    name[strcspn(name, "\n")] = 0;
+
+    printf("Nhap diem Toan: ");
+    scanf("%f", &math);
+    printf("Nhap diem Ly: ");
+    scanf("%f", &physics);
+    printf("Nhap diem Hoa: ");
+    scanf("%f", &chemistry);
+
+    // Tính điểm trung bình
+    average = (math + physics + chemistry) / 3.0;
+
+    printf("\n=== KET QUA ===\n");
+    printf("Ten hoc sinh: %s\n", name);
+    printf("Diem Toan: %.2f\n", math);
+    printf("Diem Ly: %.2f\n", physics);
+    printf("Diem Hoa: %.2f\n", chemistry);
+    printf("Diem trung binh: %.2f\n", average);
+
+    // Xếp loại học lực
+    if (average >= 8.0) {
+        printf("Xep loai: Gioi\n");
+    } else if (average >= 6.5) {
+        printf("Xep loai: Kha\n");
+    } else if (average >= 5.0) {
+        printf("Xep loai: Trung binh\n");
+    } else {
+        printf("Xep loai: Yeu\n");
+    }
+
+    return 0;
+}
+```
+
+## Tổng kết
+
+Nắm vững các khái niệm nền tảng này là điều kiện tiên quyết để tiến xa hơn trong lập trình C.
+
+-   **Cấu trúc chương trình:** Luôn bắt đầu với `int main()` và `#include` các thư viện cần thiết.
+-   **Biến và Kiểu dữ liệu:** Là công cụ cơ bản để lưu trữ và quản lý thông tin.
+-   **Toán tử:** Cho phép thực hiện các phép toán và so sánh, tạo nên logic cho chương trình.
+-   **Nhập/Xuất:** `printf()` và `scanf()` là các hàm cơ bản để tương tác với người dùng.
+
+Với nền tảng này, bạn đã sẵn sàng để khám phá các cấu trúc điều khiển, vòng lặp, hàm và các khái niệm phức tạp hơn trong C.
