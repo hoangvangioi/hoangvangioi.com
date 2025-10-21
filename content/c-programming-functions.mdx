@@ -1,0 +1,564 @@
+---
+title: 'Hàm trong C: Bí quyết viết code module hóa và tái sử dụng'
+description: 'Khám phá sức mạnh của hàm trong C: cách định nghĩa, gọi hàm, truyền tham số, giá trị trả về, và kỹ thuật đệ quy để tạo code sạch và tái sử dụng.'
+authors: [gioi]
+date: '2025-10-19T14:39:05.000Z'
+tags: ['C', 'Programming', 'Functions', 'Recursion']
+image: '/posts/c-programming-functions/cover.webp'
+---
+
+![banner](/posts/c-programming-functions/cover.webp)
+
+<Info title="Tóm tắt kiến thức">
+Hàm là trái tim của lập trình có cấu trúc, cho phép bạn chia nhỏ chương trình thành các phần có thể tái sử dụng, giúp code dễ đọc, dễ bảo trì và debug. Bài viết này sẽ giúp bạn làm chủ hoàn toàn khái niệm hàm trong C.
+</Info>
+
+Hàm là một khối mã thực hiện một tác vụ cụ thể và có thể được gọi từ nhiều nơi khác nhau trong chương trình. Việc sử dụng hàm giúp code dễ đọc, dễ bảo trì và tái sử dụng, đây là nền tảng của lập trình có cấu trúc.
+
+<Adsense />
+
+## Tổng quan về hàm
+
+### Cú pháp định nghĩa hàm
+
+```c title="Cú pháp hàm"
+kiểu_trả_về tên_hàm(danh_sách_tham_số) {
+    // Thân hàm
+    return giá_trị; // Nếu có
+}
+```
+
+### Ví dụ thực tế: Hàm cơ bản
+
+```c title="Ví dụ hàm đơn giản"
+#include <stdio.h>
+
+// Hàm không có tham số và không trả về giá trị
+void sayHello() {
+    printf("Xin chào!\n");
+}
+
+// Hàm có tham số và trả về giá trị
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    sayHello();
+
+    int result = add(5, 3);
+    printf("Tổng: %d\n", result);
+
+    return 0;
+}
+```
+
+<Tip title="Lợi ích của hàm">
+- **Tái sử dụng code**: Viết một lần, dùng nhiều nơi
+- **Dễ đọc**: Chia nhỏ chương trình thành các phần logic
+- **Dễ bảo trì**: Sửa lỗi ở một nơi, áp dụng toàn bộ
+- **Module hóa**: Tách biệt các chức năng khác nhau
+</Tip>
+
+## Các loại hàm
+
+### Hàm không có tham số và không trả về giá trị
+
+```c
+#include <stdio.h>
+
+void printMenu() {
+    printf("=== MENU ===\n");
+    printf("1. Tính tổng\n");
+    printf("2. Tính hiệu\n");
+    printf("3. Tính tích\n");
+    printf("4. Tính thương\n");
+}
+
+int main() {
+    printMenu();
+    return 0;
+}
+```
+
+### Hàm có tham số và không trả về giá trị
+
+```c
+#include <stdio.h>
+
+void printNumber(int num) {
+    printf("Số bạn nhập: %d\n", num);
+}
+
+void printRectangle(int width, int height) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            printf("* ");
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    printNumber(42);
+    printRectangle(5, 3);
+    return 0;
+}
+```
+
+### Hàm có tham số và trả về giá trị
+
+```c
+#include <stdio.h>
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
+float calculateCircleArea(float radius) {
+    const float PI = 3.14159;
+    return PI * radius * radius;
+}
+
+int main() {
+    int product = multiply(4, 5);
+    printf("Tích: %d\n", product);
+
+    float area = calculateCircleArea(3.5);
+    printf("Diện tích hình tròn: %.2f\n", area);
+
+    return 0;
+}
+```
+
+## Nguyên mẫu hàm (Function Prototype)
+
+Nguyên mẫu hàm khai báo hàm trước khi sử dụng, giúp trình biên dịch hiểu về hàm.
+
+```c
+#include <stdio.h>
+
+// Nguyên mẫu hàm
+int add(int a, int b);
+void printResult(int result);
+
+int main() {
+    int sum = add(10, 20);
+    printResult(sum);
+    return 0;
+}
+
+// Định nghĩa hàm
+int add(int a, int b) {
+    return a + b;
+}
+
+void printResult(int result) {
+    printf("Kết quả: %d\n", result);
+}
+```
+
+## Truyền tham trị và truyền tham chiếu
+
+### Truyền tham trị (Pass by Value)
+
+```c
+#include <stdio.h>
+
+void swapByValue(int a, int b) {
+    int temp = a;
+    a = b;
+    b = temp;
+    printf("Trong hàm: a = %d, b = %d\n", a, b);
+}
+
+int main() {
+    int x = 10, y = 20;
+    printf("Trước khi gọi hàm: x = %d, y = %d\n", x, y);
+
+    swapByValue(x, y);
+
+    printf("Sau khi gọi hàm: x = %d, y = %d\n", x, y);
+    // x và y không thay đổi vì truyền tham trị
+
+    return 0;
+}
+```
+
+### Truyền tham chiếu (Pass by Reference)
+
+```c
+#include <stdio.h>
+
+void swapByReference(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    printf("Trong hàm: *a = %d, *b = %d\n", *a, *b);
+}
+
+int main() {
+    int x = 10, y = 20;
+    printf("Trước khi gọi hàm: x = %d, y = %d\n", x, y);
+
+    swapByReference(&x, &y);
+
+    printf("Sau khi gọi hàm: x = %d, y = %d\n", x, y);
+    // x và y đã hoán đổi vì truyền tham chiếu
+
+    return 0;
+}
+```
+
+## Trả về nhiều giá trị
+
+```c
+#include <stdio.h>
+
+void getMinMax(int a, int b, int c, int *min, int *max) {
+    *min = a;
+    *max = a;
+
+    if (b < *min) *min = b;
+    if (b > *max) *max = b;
+    if (c < *min) *min = c;
+    if (c > *max) *max = c;
+}
+
+int main() {
+    int x = 15, y = 8, z = 23;
+    int min, max;
+
+    getMinMax(x, y, z, &min, &max);
+
+    printf("Số nhỏ nhất: %d\n", min);
+    printf("Số lớn nhất: %d\n", max);
+
+    return 0;
+}
+```
+
+## Đệ quy (Recursion)
+
+Đệ quy là khi một hàm gọi chính nó. Điều kiện quan trọng là phải có điều kiện dừng.
+
+### Ví dụ: Tính giai thừa
+
+```c
+#include <stdio.h>
+
+long long factorial(int n) {
+    // Điều kiện dừng
+    if (n <= 1) {
+        return 1;
+    }
+    // Đệ quy
+    return n * factorial(n - 1);
+}
+
+int main() {
+    int n;
+    printf("Nhập số để tính giai thừa: ");
+    scanf("%d", &n);
+
+    if (n < 0) {
+        printf("Giai thừa không được định nghĩa cho số âm!\n");
+    } else {
+        printf("%d! = %lld\n", n, factorial(n));
+    }
+
+    return 0;
+}
+```
+
+### Ví dụ: Dãy Fibonacci
+
+```c
+#include <stdio.h>
+
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    int n;
+    printf("Nhập số phần tử dãy Fibonacci: ");
+    scanf("%d", &n);
+
+    printf("Dãy Fibonacci: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", fibonacci(i));
+    }
+    printf("\n");
+
+    return 0;
+}
+```
+
+## Hàm với mảng
+
+### Truyền mảng vào hàm
+
+```c
+#include <stdio.h>
+
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int sumArray(int arr[], int size) {
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+void reverseArray(int arr[], int size) {
+    for (int i = 0; i < size / 2; i++) {
+        int temp = arr[i];
+        arr[i] = arr[size - 1 - i];
+        arr[size - 1 - i] = temp;
+    }
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+
+    printf("Mảng ban đầu: ");
+    printArray(numbers, size);
+
+    int sum = sumArray(numbers, size);
+    printf("Tổng các phần tử: %d\n", sum);
+
+    reverseArray(numbers, size);
+    printf("Mảng sau khi đảo ngược: ");
+    printArray(numbers, size);
+
+    return 0;
+}
+```
+
+## Hàm trả về con trỏ
+
+```c
+#include <stdio.h>
+
+int* findMax(int arr[], int size) {
+    int maxIndex = 0;
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    return &arr[maxIndex];
+}
+
+int main() {
+    int numbers[] = {3, 7, 2, 9, 1, 5};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+
+    int *maxPtr = findMax(numbers, size);
+    printf("Giá trị lớn nhất: %d\n", *maxPtr);
+    printf("Vị trí: %ld\n", maxPtr - numbers);
+
+    return 0;
+}
+```
+
+## Hàm với tham số mặc định (C99 trở lên)
+
+```c
+#include <stdio.h>
+
+int power(int base, int exp) {
+    int result = 1;
+    for (int i = 0; i < exp; i++) {
+        result *= base;
+    }
+    return result;
+}
+
+int main() {
+    printf("2^3 = %d\n", power(2, 3));
+    printf("5^2 = %d\n", power(5, 2));
+
+    return 0;
+}
+```
+
+## Xử lý lỗi trong hàm
+
+```c
+#include <stdio.h>
+
+int divide(int a, int b, float *result) {
+    if (b == 0) {
+        return 0; // Lỗi: chia cho 0
+    }
+    *result = (float)a / b;
+    return 1; // Thành công
+}
+
+int main() {
+    int a = 10, b = 3;
+    float result;
+
+    if (divide(a, b, &result)) {
+        printf("%d / %d = %.2f\n", a, b, result);
+    } else {
+        printf("Lỗi: Không thể chia cho 0!\n");
+    }
+
+    return 0;
+}
+```
+
+## Ví dụ thực hành
+
+### 1. Chương trình menu với các hàm
+
+```c
+#include <stdio.h>
+
+void showMenu() {
+    printf("\n=== MENU ===\n");
+    printf("1. Tính tổng hai số\n");
+    printf("2. Tính hiệu hai số\n");
+    printf("3. Tính tích hai số\n");
+    printf("4. Tính thương hai số\n");
+    printf("5. Thoát\n");
+}
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int subtract(int a, int b) {
+    return a - b;
+}
+
+int multiply(int a, int b) {
+    return a * b;
+}
+
+float divide(int a, int b) {
+    if (b == 0) {
+        printf("Lỗi: Chia cho 0!\n");
+        return 0;
+    }
+    return (float)a / b;
+}
+
+int main() {
+    int choice, a, b;
+
+    do {
+        showMenu();
+        printf("Nhập lựa chọn: ");
+        scanf("%d", &choice);
+
+        if (choice >= 1 && choice <= 4) {
+            printf("Nhập hai số: ");
+            scanf("%d %d", &a, &b);
+        }
+
+        switch(choice) {
+            case 1:
+                printf("Tổng: %d\n", add(a, b));
+                break;
+            case 2:
+                printf("Hiệu: %d\n", subtract(a, b));
+                break;
+            case 3:
+                printf("Tích: %d\n", multiply(a, b));
+                break;
+            case 4:
+                printf("Thương: %.2f\n", divide(a, b));
+                break;
+            case 5:
+                printf("Tạm biệt!\n");
+                break;
+            default:
+                printf("Lựa chọn không hợp lệ!\n");
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+```
+
+### 2. Hàm kiểm tra số nguyên tố
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isPrime(int n) {
+    if (n < 2) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void printPrimesInRange(int start, int end) {
+    printf("Các số nguyên tố từ %d đến %d: ", start, end);
+    for (int i = start; i <= end; i++) {
+        if (isPrime(i)) {
+            printf("%d ", i);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int start, end;
+
+    printf("Nhập khoảng (start end): ");
+    scanf("%d %d", &start, &end);
+
+    printPrimesInRange(start, end);
+
+    return 0;
+}
+```
+
+## Tổng kết
+
+Hàm là công cụ mạnh mẽ nhất để tổ chức code C một cách có cấu trúc và chuyên nghiệp.
+
+<Accordion title="Những kiến thức quan trọng về hàm">
+- **Định nghĩa và gọi hàm**: Cú pháp cơ bản và cách sử dụng
+- **Tham số và giá trị trả về**: Các cách truyền dữ liệu
+- **Nguyên mẫu hàm**: Khai báo hàm trước khi sử dụng
+- **Truyền tham trị và tham chiếu**: Hiểu sự khác biệt quan trọng
+- **Đệ quy**: Kỹ thuật mạnh mẽ nhưng cần cẩn thận
+- **Hàm với mảng và con trỏ**: Xử lý dữ liệu phức tạp
+- **Xử lý lỗi**: Cách kiểm tra và xử lý lỗi trong hàm
+</Accordion>
+
+<Warning title="Lưu ý quan trọng về đệ quy">
+Đệ quy có thể gây ra stack overflow nếu không có điều kiện dừng rõ ràng. Luôn đảm bảo có base case và recursive case hướng đến base case.
+</Warning>
+
+<Info title="Best Practices">
+- Đặt tên hàm mô tả rõ chức năng
+- Một hàm chỉ làm một việc duy nhất
+- Sử dụng nguyên mẫu hàm để tổ chức code
+- Tránh đệ quy sâu, ưu tiên vòng lặp khi có thể
+</Info>
+
+Với những kiến thức này, bạn đã sẵn sàng để tạo ra các chương trình C phức tạp, có cấu trúc và dễ bảo trì. Hãy tiếp tục khám phá các khái niệm nâng cao như con trỏ và cấu trúc dữ liệu!
