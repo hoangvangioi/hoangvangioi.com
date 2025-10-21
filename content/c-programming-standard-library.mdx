@@ -1,0 +1,825 @@
+---
+title: 'Thư viện chuẩn C: Khám phá các hàm hữu ích trong stdio.h, string.h, math.h'
+description: 'Khám phá sức mạnh của C Standard Library: stdio.h, stdlib.h, string.h, math.h và các hàm tiện ích quan trọng để viết code hiệu quả.'
+authors: [gioi]
+date: '2025-10-19T14:48:05.000Z'
+tags: ['C', 'Programming', 'Standard Library', 'STDLIB']
+image: '/posts/c-programming-standard-library/cover.webp'
+---
+
+![banner](/posts/c-programming-standard-library/cover.webp)
+
+<Info title="Tóm tắt kiến thức">
+C Standard Library là bộ công cụ mạnh mẽ được cung cấp sẵn với mọi trình biên dịch C. Hiểu rõ các thư viện này sẽ giúp bạn viết code hiệu quả hơn, tận dụng được các hàm được tối ưu sẵn và giảm thiểu thời gian phát triển.
+</Info>
+
+C Standard Library là tập hợp các thư viện chuẩn được cung cấp với mọi trình biên dịch C. Những thư viện này chứa các hàm, macro và kiểu dữ liệu được định nghĩa sẵn, giúp lập trình viên thực hiện các tác vụ phổ biến mà không cần viết lại từ đầu.
+
+<Adsense />
+
+## Tổng quan về C Standard Library
+
+### Các thư viện chính
+
+<Tabs items={['Thư viện cơ bản', 'Thư viện mở rộng']}>
+<Tab value="Thư viện cơ bản">
+| Thư viện     | Mô tả                         | File header |
+|-------------|-------------------------------|-------------|
+| **stdio.h**  | Input/Output chuẩn            | stdio.h     |
+| **stdlib.h** | Các hàm tiện ích chung        | stdlib.h    |
+| **string.h** | Xử lý chuỗi                   | string.h    |
+| **math.h**   | Các hàm toán học              | math.h      |
+</Tab>
+<Tab value="Thư viện mở rộng">
+| Thư viện     | Mô tả                         | File header |
+|-------------|-------------------------------|-------------|
+| **time.h**    | Xử lý thời gian và ngày tháng | time.h      |
+| **ctype.h**   | Xử lý ký tự                   | ctype.h     |
+| **limits.h**  | Các hằng số giới hạn          | limits.h    |
+| **float.h**   | Các hằng số số thực           | float.h     |
+</Tab>
+</Tabs>
+
+<Tip title="Tại sao Standard Library quan trọng?">
+- **Tối ưu hóa**: Các hàm được tối ưu cho hiệu suất cao
+- **Đáng tin cậy**: Được test kỹ lưỡng và ổn định
+- **Portable**: Hoạt động trên mọi platform
+- **Tiết kiệm thời gian**: Không cần viết lại các hàm cơ bản
+</Tip>
+
+## stdio.h - Input/Output
+
+### Các hàm cơ bản
+
+```c
+#include <stdio.h>
+
+int main() {
+    // printf - in ra màn hình
+    printf("Hello, World!\n");
+    printf("So nguyen: %d\n", 42);
+    printf("So thuc: %.2f\n", 3.14159);
+    printf("Ky tu: %c\n", 'A');
+    printf("Chuoi: %s\n", "Hello");
+
+    // scanf - nhập từ bàn phím
+    int age;
+    float height;
+    char name[50];
+
+    printf("Nhap tuoi: ");
+    scanf("%d", &age);
+
+    printf("Nhap chieu cao: ");
+    scanf("%f", &height);
+
+    printf("Nhap ten: ");
+    scanf(" %[^\n]", name);  // Đọc chuỗi có khoảng trắng
+
+    printf("Ten: %s, Tuoi: %d, Chieu cao: %.2f\n", name, age, height);
+
+    return 0;
+}
+```
+
+### File I/O
+
+```c
+#include <stdio.h>
+
+int main() {
+    FILE *file;
+    char content[] = "Day la noi dung file test";
+    char buffer[100];
+
+    // Ghi file
+    file = fopen("test.txt", "w");
+    if (file != NULL) {
+        fprintf(file, "%s\n", content);
+        fprintf(file, "Dong thu 2\n");
+        fprintf(file, "Dong thu 3\n");
+        fclose(file);
+        printf("Da ghi file thanh cong!\n");
+    }
+
+    // Đọc file
+    file = fopen("test.txt", "r");
+    if (file != NULL) {
+        printf("Noi dung file:\n");
+        while (fgets(buffer, sizeof(buffer), file) != NULL) {
+            printf("%s", buffer);
+        }
+        fclose(file);
+    }
+
+    return 0;
+}
+```
+
+### Các hàm I/O khác
+
+```c
+#include <stdio.h>
+
+int main() {
+    // puts - in chuỗi với newline
+    puts("Day la puts()");
+
+    // putchar - in một ký tự
+    putchar('A');
+    putchar('\n');
+
+    // getchar - đọc một ký tự
+    printf("Nhap mot ky tu: ");
+    int ch = getchar();
+    printf("Ky tu ban vua nhap: %c\n", ch);
+
+    // gets (deprecated) - đọc chuỗi
+    // fgets - đọc chuỗi an toàn
+    char str[100];
+    printf("Nhap chuoi: ");
+    fgets(str, sizeof(str), stdin);
+    printf("Chuoi ban vua nhap: %s", str);
+
+    return 0;
+}
+```
+
+## stdlib.h - Tiện ích chung
+
+### Cấp phát bộ nhớ
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // malloc - cấp phát bộ nhớ
+    int *ptr1 = malloc(5 * sizeof(int));
+    if (ptr1 == NULL) {
+        printf("Khong the cap phat bo nho!\n");
+        return 1;
+    }
+
+    // calloc - cấp phát và khởi tạo về 0
+    int *ptr2 = calloc(5, sizeof(int));
+    if (ptr2 == NULL) {
+        printf("Khong the cap phat bo nho!\n");
+        free(ptr1);
+        return 1;
+    }
+
+    // Khởi tạo dữ liệu
+    for (int i = 0; i < 5; i++) {
+        ptr1[i] = i * 10;
+    }
+
+    printf("Malloc array: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", ptr1[i]);
+    }
+    printf("\n");
+
+    printf("Calloc array: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", ptr2[i]);
+    }
+    printf("\n");
+
+    // Giải phóng bộ nhớ
+    free(ptr1);
+    free(ptr2);
+
+    return 0;
+}
+```
+
+### Chuyển đổi kiểu dữ liệu
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // atoi - chuyển chuỗi thành int
+    char str1[] = "123";
+    int num1 = atoi(str1);
+    printf("atoi(\"%s\") = %d\n", str1, num1);
+
+    // atof - chuyển chuỗi thành double
+    char str2[] = "3.14159";
+    double num2 = atof(str2);
+    printf("atof(\"%s\") = %.5f\n", str2, num2);
+
+    // atol - chuyển chuỗi thành long
+    char str3[] = "123456789";
+    long num3 = atol(str3);
+    printf("atol(\"%s\") = %ld\n", str3, num3);
+
+    // strtol - chuyển đổi với kiểm soát lỗi
+    char str4[] = "123abc";
+    char *endptr;
+    long num4 = strtol(str4, &endptr, 10);
+
+    if (*endptr != '\0') {
+        printf("strtol(\"%s\") = %ld, phan khong hop le: %s\n",
+               str4, num4, endptr);
+    } else {
+        printf("strtol(\"%s\") = %ld\n", str4, num4);
+    }
+
+    return 0;
+}
+```
+
+### Tìm kiếm và sắp xếp
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_int(const void *a, const void *b) {
+    int ia = *(const int*)a;
+    int ib = *(const int*)b;
+    return ia - ib;
+}
+
+int main() {
+    int numbers[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(numbers) / sizeof(numbers[0]);
+
+    printf("Mang ban dau: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    // Sắp xếp với qsort
+    qsort(numbers, n, sizeof(int), compare_int);
+
+    printf("Mang sau khi sap xep: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\n");
+
+    // Tìm kiếm với bsearch
+    int key = 25;
+    int *result = bsearch(&key, numbers, n, sizeof(int), compare_int);
+
+    if (result != NULL) {
+        printf("Tim thay %d tai vi tri %ld\n", key, result - numbers);
+    } else {
+        printf("Khong tim thay %d\n", key);
+    }
+
+    return 0;
+}
+```
+
+### Các hàm tiện ích khác
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // abs - giá trị tuyệt đối
+    printf("abs(-10) = %d\n", abs(-10));
+    printf("abs(10) = %d\n", abs(10));
+
+    // rand - số ngẫu nhiên
+    printf("So ngau nhien: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", rand());
+    }
+    printf("\n");
+
+    // srand - khởi tạo seed cho rand
+    srand(42);
+    printf("So ngau nhien voi seed 42: ");
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", rand());
+    }
+    printf("\n");
+
+    // exit - thoát chương trình
+    printf("Chuong trinh se thoat...\n");
+    exit(0);
+
+    printf("Dong nay se khong bao gio chay!\n");
+
+    return 0;
+}
+```
+
+## string.h - Xử lý chuỗi
+
+### Các hàm cơ bản
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str1[] = "Hello";
+    char str2[] = "World";
+    char str3[20];
+
+    // strlen - độ dài chuỗi
+    printf("Do dai str1: %zu\n", strlen(str1));
+
+    // strcpy - sao chép chuỗi
+    strcpy(str3, str1);
+    printf("strcpy: %s\n", str3);
+
+    // strcat - nối chuỗi
+    strcat(str3, " ");
+    strcat(str3, str2);
+    printf("strcat: %s\n", str3);
+
+    // strcmp - so sánh chuỗi
+    int result = strcmp(str1, str2);
+    if (result == 0) {
+        printf("str1 bang str2\n");
+    } else if (result < 0) {
+        printf("str1 nho hon str2\n");
+    } else {
+        printf("str1 lon hon str2\n");
+    }
+
+    return 0;
+}
+```
+
+### Các hàm tìm kiếm
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char text[] = "Hello World Hello";
+    char *result;
+
+    // strchr - tìm ký tự đầu tiên
+    result = strchr(text, 'o');
+    if (result != NULL) {
+        printf("Tim thay 'o' tai vi tri: %ld\n", result - text);
+        printf("Phan chuoi tu vi tri do: %s\n", result);
+    }
+
+    // strrchr - tìm ký tự cuối cùng
+    result = strrchr(text, 'o');
+    if (result != NULL) {
+        printf("Tim thay 'o' cuoi cung tai vi tri: %ld\n", result - text);
+        printf("Phan chuoi tu vi tri do: %s\n", result);
+    }
+
+    // strstr - tìm chuỗi con
+    result = strstr(text, "World");
+    if (result != NULL) {
+        printf("Tim thay 'World' tai vi tri: %ld\n", result - text);
+        printf("Phan chuoi tu vi tri do: %s\n", result);
+    }
+
+    // strpbrk - tìm ký tự đầu tiên trong tập hợp
+    result = strpbrk(text, "aeiou");
+    if (result != NULL) {
+        printf("Tim thay nguyen am dau tien '%c' tai vi tri: %ld\n",
+               *result, result - text);
+    }
+
+    return 0;
+}
+```
+
+### Các hàm khác
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[] = "Hello,World,Test";
+    char *token;
+
+    // strtok - tách chuỗi
+    printf("Tach chuoi '%s':\n", str);
+    token = strtok(str, ",");
+    while (token != NULL) {
+        printf("- %s\n", token);
+        token = strtok(NULL, ",");
+    }
+
+    // strncpy - sao chép n ký tự
+    char src[] = "Hello World";
+    char dest[10];
+    strncpy(dest, src, 5);
+    dest[5] = '\0';  // Quan trọng: thêm null terminator
+    printf("strncpy 5 ky tu: '%s'\n", dest);
+
+    // strncat - nối n ký tự
+    char str1[20] = "Hello";
+    strncat(str1, " World", 6);
+    printf("strncat: '%s'\n", str1);
+
+    // strncmp - so sánh n ký tự
+    int cmp_result = strncmp("Hello", "Help", 3);
+    printf("strncmp 3 ky tu dau: %d\n", cmp_result);
+
+    return 0;
+}
+```
+
+## math.h - Các hàm toán học
+
+### Các hàm cơ bản
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    double x = 4.0;
+    double y = 2.0;
+
+    // Căn bậc hai
+    printf("sqrt(%.1f) = %.2f\n", x, sqrt(x));
+
+    // Lũy thừa
+    printf("pow(%.1f, %.1f) = %.2f\n", x, y, pow(x, y));
+
+    // Logarit tự nhiên
+    printf("log(%.1f) = %.2f\n", x, log(x));
+
+    // Logarit cơ số 10
+    printf("log10(%.1f) = %.2f\n", x * 10, log10(x * 10));
+
+    // Hàm mũ
+    printf("exp(%.1f) = %.2f\n", y, exp(y));
+
+    return 0;
+}
+```
+
+### Các hàm lượng giác
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    double angle = 45.0;  // độ
+    double radians = angle * M_PI / 180.0;  // chuyển sang radian
+
+    printf("Goc: %.1f do (%.4f radian)\n", angle, radians);
+
+    // Sin, Cos, Tan
+    printf("sin(%.4f) = %.4f\n", radians, sin(radians));
+    printf("cos(%.4f) = %.4f\n", radians, cos(radians));
+    printf("tan(%.4f) = %.4f\n", radians, tan(radians));
+
+    // Arc functions
+    printf("asin(%.4f) = %.4f radian\n", sin(radians), asin(sin(radians)));
+    printf("acos(%.4f) = %.4f radian\n", cos(radians), acos(cos(radians)));
+    printf("atan(%.4f) = %.4f radian\n", tan(radians), atan(tan(radians)));
+
+    return 0;
+}
+```
+
+### Các hàm khác
+
+```c
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    double x = -3.7;
+
+    // ceil - làm tròn lên
+    printf("ceil(%.1f) = %.1f\n", x, ceil(x));
+
+    // floor - làm tròn xuống
+    printf("floor(%.1f) = %.1f\n", x, floor(x));
+
+    // round - làm tròn gần nhất
+    printf("round(%.1f) = %.1f\n", x, round(x));
+
+    // fabs - giá trị tuyệt đối
+    printf("fabs(%.1f) = %.1f\n", x, fabs(x));
+
+    // fmod - phần dư
+    printf("fmod(%.1f, 2.0) = %.1f\n", x, fmod(x, 2.0));
+
+    // Các hằng số
+    printf("PI = %.10f\n", M_PI);
+    printf("E = %.10f\n", M_E);
+
+    return 0;
+}
+```
+
+## time.h - Xử lý thời gian
+
+```c
+#include <stdio.h>
+#include <time.h>
+
+int main() {
+    time_t current_time;
+    struct tm *time_info;
+    char time_string[100];
+
+    // Lấy thời gian hiện tại
+    time(&current_time);
+
+    // Chuyển đổi thành struct tm
+    time_info = localtime(&current_time);
+
+    // Định dạng thời gian
+    strftime(time_string, sizeof(time_string), "%Y-%m-%d %H:%M:%S", time_info);
+    printf("Thoi gian hien tai: %s\n", time_string);
+
+    // Các định dạng khác
+    strftime(time_string, sizeof(time_string), "%A, %B %d, %Y", time_info);
+    printf("Ngay trong tuan: %s\n", time_string);
+
+    strftime(time_string, sizeof(time_string), "%I:%M %p", time_info);
+    printf("Gio 12h: %s\n", time_string);
+
+    // Tính thời gian thực thi
+    clock_t start = clock();
+
+    // Mô phỏng công việc
+    for (int i = 0; i < 1000000; i++) {
+        // Do something
+    }
+
+    clock_t end = clock();
+    double cpu_time = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Thoi gian thuc thi: %.6f giay\n", cpu_time);
+
+    return 0;
+}
+```
+
+## ctype.h - Xử lý ký tự
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char ch = 'A';
+
+    // Kiểm tra loại ký tự
+    printf("isalpha('%c'): %d\n", ch, isalpha(ch));
+    printf("isdigit('%c'): %d\n", ch, isdigit(ch));
+    printf("isalnum('%c'): %d\n", ch, isalnum(ch));
+    printf("isspace('%c'): %d\n", ch, isspace(ch));
+    printf("isupper('%c'): %d\n", ch, isupper(ch));
+    printf("islower('%c'): %d\n", ch, islower(ch));
+    printf("ispunct('%c'): %d\n", ch, ispunct(ch));
+
+    // Chuyển đổi ký tự
+    printf("tolower('%c'): %c\n", ch, tolower(ch));
+    printf("toupper('%c'): %c\n", tolower(ch), toupper(tolower(ch)));
+
+    // Xử lý chuỗi
+    char str[] = "Hello World 123!";
+    printf("Chuoi goc: %s\n", str);
+
+    printf("Chuyen thanh chu thuong: ");
+    for (int i = 0; str[i]; i++) {
+        putchar(tolower(str[i]));
+    }
+    printf("\n");
+
+    printf("Chuyen thanh chu hoa: ");
+    for (int i = 0; str[i]; i++) {
+        putchar(toupper(str[i]));
+    }
+    printf("\n");
+
+    return 0;
+}
+```
+
+## limits.h và float.h - Các hằng số
+
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <float.h>
+
+int main() {
+    // Giới hạn kiểu int
+    printf("Giới hạn kiểu int:\n");
+    printf("INT_MIN: %d\n", INT_MIN);
+    printf("INT_MAX: %d\n", INT_MAX);
+    printf("UINT_MAX: %u\n", UINT_MAX);
+
+    // Giới hạn kiểu long
+    printf("\nGiới hạn kiểu long:\n");
+    printf("LONG_MIN: %ld\n", LONG_MIN);
+    printf("LONG_MAX: %ld\n", LONG_MAX);
+
+    // Giới hạn kiểu char
+    printf("\nGiới hạn kiểu char:\n");
+    printf("CHAR_MIN: %d\n", CHAR_MIN);
+    printf("CHAR_MAX: %d\n", CHAR_MAX);
+
+    // Giới hạn kiểu float
+    printf("\nGiới hạn kiểu float:\n");
+    printf("FLT_MIN: %e\n", FLT_MIN);
+    printf("FLT_MAX: %e\n", FLT_MAX);
+    printf("FLT_DIG: %d\n", FLT_DIG);
+
+    // Giới hạn kiểu double
+    printf("\nGiới hạn kiểu double:\n");
+    printf("DBL_MIN: %e\n", DBL_MIN);
+    printf("DBL_MAX: %e\n", DBL_MAX);
+    printf("DBL_DIG: %d\n", DBL_DIG);
+
+    return 0;
+}
+```
+
+## Ví dụ thực hành
+
+### 1. Tạo hàm tiện ích cho chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Đếm số từ trong chuỗi
+int countWords(char *str) {
+    int count = 0;
+    int inWord = 0;
+
+    while (*str) {
+        if (isalpha(*str) && !inWord) {
+            count++;
+            inWord = 1;
+        } else if (!isalpha(*str)) {
+            inWord = 0;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+// Đảo ngược chuỗi
+void reverseString(char *str) {
+    int len = strlen(str);
+    int start = 0;
+    int end = len - 1;
+
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+// Kiểm tra palindrome
+int isPalindrome(char *str) {
+    char temp[100];
+    strcpy(temp, str);
+
+    // Loại bỏ khoảng trắng và chuyển thành chữ thường
+    int j = 0;
+    for (int i = 0; str[i]; i++) {
+        if (isalpha(str[i])) {
+            temp[j++] = tolower(str[i]);
+        }
+    }
+    temp[j] = '\0';
+
+    // Đảo ngược
+    reverseString(temp);
+
+    // So sánh với chuỗi gốc (đã chuyển thành chữ thường)
+    for (int i = 0; str[i]; i++) {
+        if (isalpha(str[i])) {
+            if (tolower(str[i]) != temp[i]) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int main() {
+    char text[] = "Hello World";
+    char palindrome[] = "A man a plan a canal Panama";
+
+    printf("Chuoi: '%s'\n", text);
+    printf("So tu: %d\n", countWords(text));
+
+    reverseString(text);
+    printf("Dao nguoc: '%s'\n", text);
+
+    printf("\nKiem tra palindrome:\n");
+    printf("'%s': %s\n", palindrome, isPalindrome(palindrome) ? "Co" : "Khong");
+
+    return 0;
+}
+```
+
+### 2. Máy tính đơn giản với xử lý lỗi
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+double calculate(double a, double b, char operation) {
+    switch (operation) {
+        case '+':
+            return a + b;
+        case '-':
+            return a - b;
+        case '*':
+            return a * b;
+        case '/':
+            if (b == 0) {
+                printf("Loi: Chia cho 0!\n");
+                return 0;
+            }
+            return a / b;
+        case '^':
+            return pow(a, b);
+        case 's':
+            return sqrt(a);
+        default:
+            printf("Loi: Phép toán khong hop le!\n");
+            return 0;
+    }
+}
+
+int main() {
+    char input[100];
+    double num1, num2, result;
+    char operation;
+
+    printf("=== MAY TINH DON GIAN ===\n");
+    printf("Nhap bieu thuc (vi du: 5 + 3, 16 s): ");
+    fgets(input, sizeof(input), stdin);
+
+    if (sscanf(input, "%lf %c %lf", &num1, &operation, &num2) == 3) {
+        // Phép toán hai số
+        result = calculate(num1, num2, operation);
+        printf("Ket qua: %.2f %c %.2f = %.2f\n", num1, operation, num2, result);
+    } else if (sscanf(input, "%lf %c", &num1, &operation) == 2 && operation == 's') {
+        // Căn bậc hai
+        result = calculate(num1, 0, operation);
+        printf("Ket qua: sqrt(%.2f) = %.2f\n", num1, result);
+    } else {
+        printf("Loi: Dinh dang khong hop le!\n");
+        printf("Su dung: 'so1 pheptoan so2' hoac 'so s' cho can bac hai\n");
+    }
+
+    return 0;
+}
+```
+
+## Tổng kết
+
+C Standard Library là bộ công cụ mạnh mẽ giúp bạn viết code hiệu quả và tận dụng sức mạnh của ngôn ngữ C.
+
+<Accordion title="Những kiến thức quan trọng về Standard Library">
+- **stdio.h**: Input/Output, file handling
+- **stdlib.h**: Memory management, type conversion, sorting
+- **string.h**: String manipulation và comparison
+- **math.h**: Mathematical functions và constants
+- **time.h**: Time và date handling
+- **ctype.h**: Character classification và conversion
+- **limits.h/float.h**: Type limits và precision
+</Accordion>
+
+<Warning title="Lưu ý quan trọng về Standard Library">
+- **Error checking**: Luôn kiểm tra giá trị trả về của các hàm
+- **Buffer safety**: Cẩn thận với buffer overflow trong string functions
+- **Memory management**: Nhớ free() bộ nhớ từ malloc/calloc
+- **Platform differences**: Một số hàm có thể khác nhau trên các platform
+</Warning>
+
+<Info title="Best Practices">
+- Đọc documentation trước khi sử dụng các hàm mới
+- Sử dụng const với string parameters khi không thay đổi
+- Kiểm tra NULL pointers trước khi sử dụng
+- Sử dụng appropriate data types cho các hàm
+- Tận dụng compiler warnings để phát hiện lỗi sớm
+</Info>
+
+Với những kiến thức này, bạn đã sẵn sàng để tận dụng toàn bộ sức mạnh của C Standard Library và viết ra những chương trình C chuyên nghiệp, hiệu quả!
