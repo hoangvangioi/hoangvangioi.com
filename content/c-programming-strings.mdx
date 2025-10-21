@@ -1,0 +1,602 @@
+---
+title: 'Xử lý chuỗi trong C: Toàn tập về string.h và các thao tác cơ bản'
+description: 'Khám phá sức mạnh xử lý chuỗi trong C: thư viện string.h, các hàm quan trọng, và kỹ thuật xử lý văn bản hiệu quả.'
+authors: [gioi]
+date: '2025-10-19T14:41:05.000Z'
+tags: ['C', 'Programming', 'Strings', 'Text Processing']
+image: '/posts/c-programming-strings/cover.webp'
+---
+
+![banner](/posts/c-programming-strings/cover.webp)
+
+<Info title="Tóm tắt kiến thức">
+Chuỗi trong C là nền tảng cho xử lý văn bản và giao tiếp với người dùng. Hiểu rõ cách làm việc với chuỗi, thư viện string.h và các hàm quan trọng sẽ giúp bạn xây dựng các ứng dụng tương tác và xử lý dữ liệu hiệu quả.
+</Info>
+
+Chuỗi (string) trong C thực chất là mảng các ký tự kết thúc bằng ký tự null (`\0`). Chuỗi là một trong những kiểu dữ liệu quan trọng nhất trong lập trình, được sử dụng để lưu trữ và xử lý văn bản, giao tiếp với người dùng và xử lý dữ liệu.
+
+<Adsense />
+
+## Tổng quan về chuỗi
+
+### Khái niệm chuỗi
+
+Chuỗi trong C là một mảng các ký tự kết thúc bằng ký tự null (`\0`). Ký tự null đánh dấu kết thúc chuỗi.
+
+### Cú pháp khai báo chuỗi
+
+```c title="Cú pháp khai báo chuỗi"
+char tên_chuỗi[kích_thước];
+```
+
+### Ví dụ thực tế:
+
+```c title="Khai báo và khởi tạo chuỗi"
+#include <stdio.h>
+
+int main() {
+    char name[50];                    // Chuỗi có thể chứa tối đa 49 ký tự
+    char message[] = "Hello World";   // Khởi tạo với giá trị
+    char city[20] = "Hanoi";          // Khởi tạo với kích thước cố định
+
+    printf("Message: %s\n", message);
+    printf("City: %s\n", city);
+
+    return 0;
+}
+```
+
+<Tip title="Đặc điểm quan trọng của chuỗi C">
+- **Null terminator**: Luôn kết thúc bằng `\0`
+- **Kích thước**: Phải cấp phát đủ không gian cho `\0`
+- **Immutable**: Chuỗi literal không thể thay đổi
+- **Array-based**: Thực chất là mảng char
+</Tip>
+
+## Nhập và xuất chuỗi
+
+### Xuất chuỗi với printf()
+
+```c
+#include <stdio.h>
+
+int main() {
+    char name[] = "Nguyen Van A";
+    char message[] = "Xin chao";
+
+    printf("Ten: %s\n", name);
+    printf("Tin nhan: %s\n", message);
+
+    return 0;
+}
+```
+
+### Nhập chuỗi với scanf()
+
+```c
+#include <stdio.h>
+
+int main() {
+    char name[50];
+    char city[30];
+
+    printf("Nhap ten: ");
+    scanf("%s", name);  // scanf() dừng khi gặp khoảng trắng
+
+    printf("Nhap thanh pho: ");
+    scanf("%s", city);
+
+    printf("Ten: %s\n", name);
+    printf("Thanh pho: %s\n", city);
+
+    return 0;
+}
+```
+
+### Nhập chuỗi có khoảng trắng với gets() và fgets()
+
+```c
+#include <stdio.h>
+
+int main() {
+    char sentence[100];
+
+    printf("Nhap cau co khoang trang: ");
+    fgets(sentence, sizeof(sentence), stdin);  // An toàn hơn gets()
+
+    printf("Cau vua nhap: %s", sentence);
+
+    return 0;
+}
+```
+
+## Các hàm xử lý chuỗi cơ bản
+
+### strlen() - Tính độ dài chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[] = "Hello World";
+    int length = strlen(str);
+
+    printf("Chuoi: %s\n", str);
+    printf("Do dai: %d\n", length);
+
+    return 0;
+}
+```
+
+### strcpy() - Sao chép chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char source[] = "Hello";
+    char destination[50];
+
+    strcpy(destination, source);
+
+    printf("Source: %s\n", source);
+    printf("Destination: %s\n", destination);
+
+    return 0;
+}
+```
+
+### strcat() - Nối chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str1[50] = "Hello";
+    char str2[] = " World";
+
+    strcat(str1, str2);
+
+    printf("Ket qua: %s\n", str1);
+
+    return 0;
+}
+```
+
+### strcmp() - So sánh chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str1[] = "apple";
+    char str2[] = "banana";
+    char str3[] = "apple";
+
+    int result1 = strcmp(str1, str2);
+    int result2 = strcmp(str1, str3);
+
+    printf("So sanh 'apple' va 'banana': %d\n", result1);
+    printf("So sanh 'apple' va 'apple': %d\n", result2);
+
+    if (result1 < 0) {
+        printf("'apple' < 'banana'\n");
+    } else if (result1 > 0) {
+        printf("'apple' > 'banana'\n");
+    } else {
+        printf("'apple' = 'banana'\n");
+    }
+
+    return 0;
+}
+```
+
+## Các hàm xử lý chuỗi nâng cao
+
+### strchr() - Tìm ký tự trong chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[] = "Hello World";
+    char *result = strchr(str, 'o');
+
+    if (result != NULL) {
+        printf("Tim thay 'o' tai vi tri: %ld\n", result - str);
+        printf("Phan chuoi tu vi tri do: %s\n", result);
+    } else {
+        printf("Khong tim thay ky tu 'o'\n");
+    }
+
+    return 0;
+}
+```
+
+### strstr() - Tìm chuỗi con
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[] = "Hello World";
+    char *result = strstr(str, "World");
+
+    if (result != NULL) {
+        printf("Tim thay 'World' tai vi tri: %ld\n", result - str);
+        printf("Phan chuoi tu vi tri do: %s\n", result);
+    } else {
+        printf("Khong tim thay chuoi con 'World'\n");
+    }
+
+    return 0;
+}
+```
+
+### strtok() - Tách chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[] = "apple,banana,orange,grape";
+    char *token;
+
+    printf("Chuoi goc: %s\n", str);
+    printf("Cac phan tu sau khi tach:\n");
+
+    token = strtok(str, ",");
+    while (token != NULL) {
+        printf("- %s\n", token);
+        token = strtok(NULL, ",");
+    }
+
+    return 0;
+}
+```
+
+## Xử lý ký tự
+
+### Các hàm xử lý ký tự
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char ch = 'A';
+
+    printf("Ky tu: %c\n", ch);
+    printf("La chu hoa: %d\n", isupper(ch));
+    printf("La chu thuong: %d\n", islower(ch));
+    printf("La chu cai: %d\n", isalpha(ch));
+    printf("La so: %d\n", isdigit(ch));
+    printf("Chuyen thanh chu thuong: %c\n", tolower(ch));
+    printf("Chuyen thanh chu hoa: %c\n", toupper('a'));
+
+    return 0;
+}
+```
+
+## Các thao tác cơ bản với chuỗi
+
+### Đảo ngược chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void reverseString(char str[]) {
+    int length = strlen(str);
+    int start = 0;
+    int end = length - 1;
+
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+int main() {
+    char str[] = "Hello";
+
+    printf("Chuoi goc: %s\n", str);
+    reverseString(str);
+    printf("Chuoi dao nguoc: %s\n", str);
+
+    return 0;
+}
+```
+
+### Đếm số từ trong chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int countWords(char str[]) {
+    int count = 0;
+    int length = strlen(str);
+    int inWord = 0;
+
+    for (int i = 0; i < length; i++) {
+        if (str[i] != ' ' && str[i] != '\t' && str[i] != '\n') {
+            if (!inWord) {
+                count++;
+                inWord = 1;
+            }
+        } else {
+            inWord = 0;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    char sentence[] = "Hello World How Are You";
+
+    printf("Cau: %s\n", sentence);
+    printf("So tu: %d\n", countWords(sentence));
+
+    return 0;
+}
+```
+
+### Đếm nguyên âm và phụ âm
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main() {
+    char str[] = "Hello World";
+    int vowels = 0, consonants = 0;
+
+    for (int i = 0; i < strlen(str); i++) {
+        char ch = tolower(str[i]);
+
+        if (isalpha(ch)) {
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                vowels++;
+            } else {
+                consonants++;
+            }
+        }
+    }
+
+    printf("Chuoi: %s\n", str);
+    printf("So nguyen am: %d\n", vowels);
+    printf("So phu am: %d\n", consonants);
+
+    return 0;
+}
+```
+
+## Sắp xếp chuỗi
+
+### Sắp xếp mảng chuỗi
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void sortStrings(char strings[][50], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(strings[i], strings[j]) > 0) {
+                char temp[50];
+                strcpy(temp, strings[i]);
+                strcpy(strings[i], strings[j]);
+                strcpy(strings[j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char names[][50] = {"Charlie", "Alice", "Bob", "David"};
+    int n = sizeof(names) / sizeof(names[0]);
+
+    printf("Mang chuoi ban dau:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%s\n", names[i]);
+    }
+
+    sortStrings(names, n);
+
+    printf("\nMang chuoi sau khi sap xep:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%s\n", names[i]);
+    }
+
+    return 0;
+}
+```
+
+## Xử lý chuỗi động
+
+### Cấp phát bộ nhớ cho chuỗi
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+    char *dynamicString;
+    int maxLength = 100;
+
+    // Cấp phát bộ nhớ
+    dynamicString = (char*)malloc(maxLength * sizeof(char));
+
+    if (dynamicString == NULL) {
+        printf("Khong the cap phat bo nho!\n");
+        return 1;
+    }
+
+    printf("Nhap chuoi: ");
+    fgets(dynamicString, maxLength, stdin);
+
+    // Loại bỏ ký tự newline
+    dynamicString[strcspn(dynamicString, "\n")] = 0;
+
+    printf("Chuoi vua nhap: %s\n", dynamicString);
+    printf("Do dai: %zu\n", strlen(dynamicString));
+
+    // Giải phóng bộ nhớ
+    free(dynamicString);
+
+    return 0;
+}
+```
+
+## Ví dụ thực hành
+
+### 1. Chương trình đăng nhập đơn giản
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char username[50];
+    char password[50];
+    char correctUsername[] = "admin";
+    char correctPassword[] = "123456";
+
+    printf("=== DANG NHAP ===\n");
+    printf("Ten dang nhap: ");
+    fgets(username, sizeof(username), stdin);
+    username[strcspn(username, "\n")] = 0;  // Loại bỏ newline
+
+    printf("Mat khau: ");
+    fgets(password, sizeof(password), stdin);
+    password[strcspn(password, "\n")] = 0;  // Loại bỏ newline
+
+    if (strcmp(username, correctUsername) == 0 &&
+        strcmp(password, correctPassword) == 0) {
+        printf("Dang nhap thanh cong!\n");
+    } else {
+        printf("Ten dang nhap hoac mat khau khong dung!\n");
+    }
+
+    return 0;
+}
+```
+
+### 2. Chương trình sắp xếp tên theo alphabet
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void sortNames(char names[][50], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(names[i], names[j]) > 0) {
+                char temp[50];
+                strcpy(temp, names[i]);
+                strcpy(names[i], names[j]);
+                strcpy(names[j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char names[][50] = {
+        "Nguyen Van A",
+        "Tran Thi B",
+        "Le Van C",
+        "Pham Thi D",
+        "Hoang Van E"
+    };
+    int n = sizeof(names) / sizeof(names[0]);
+
+    printf("Danh sach ten ban dau:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d. %s\n", i + 1, names[i]);
+    }
+
+    sortNames(names, n);
+
+    printf("\nDanh sach ten sau khi sap xep:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d. %s\n", i + 1, names[i]);
+    }
+
+    return 0;
+}
+```
+
+### 3. Chương trình đếm tần suất ký tự
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str[100];
+    int frequency[256] = {0};  // Mảng đếm tần suất
+
+    printf("Nhap chuoi: ");
+    fgets(str, sizeof(str), stdin);
+    str[strcspn(str, "\n")] = 0;
+
+    // Đếm tần suất các ký tự
+    for (int i = 0; i < strlen(str); i++) {
+        frequency[(unsigned char)str[i]]++;
+    }
+
+    printf("Tan suat cac ky tu:\n");
+    for (int i = 0; i < 256; i++) {
+        if (frequency[i] > 0 && i != ' ') {
+            printf("'%c': %d lan\n", (char)i, frequency[i]);
+        }
+    }
+
+    return 0;
+}
+```
+
+## Tổng kết
+
+Chuỗi là nền tảng cho việc xử lý văn bản và giao tiếp với người dùng trong C.
+
+<Accordion title="Những kiến thức quan trọng về chuỗi">
+- **Khai báo và khởi tạo**: Các cách tạo chuỗi
+- **Nhập xuất**: Các hàm nhập xuất chuỗi
+- **Hàm xử lý chuỗi**: strlen, strcpy, strcat, strcmp, strchr, strstr, strtok
+- **Xử lý ký tự**: Các hàm kiểm tra và chuyển đổi ký tự
+- **Thao tác cơ bản**: Đảo ngược, đếm từ, đếm nguyên âm/phụ âm
+- **Sắp xếp**: Sắp xếp mảng chuỗi
+- **Chuỗi động**: Quản lý bộ nhớ cho chuỗi
+</Accordion>
+
+<Warning title="Lưu ý quan trọng về chuỗi">
+- **Buffer overflow**: Luôn kiểm tra kích thước khi nhập chuỗi
+- **Null terminator**: Không quên ký tự `\0` khi thao tác
+- **Memory leak**: Giải phóng bộ nhớ khi dùng chuỗi động
+- **String literals**: Không thể thay đổi nội dung chuỗi literal
+</Warning>
+
+<Info title="Best Practices">
+- Sử dụng `fgets()` thay vì `scanf()` để nhập chuỗi an toàn
+- Luôn kiểm tra kết quả các hàm xử lý chuỗi
+- Sử dụng `strncpy()` thay vì `strcpy()` để an toàn hơn
+- Khởi tạo chuỗi trước khi sử dụng
+</Info>
+
+Với những kiến thức này, bạn đã sẵn sàng để xây dựng các ứng dụng tương tác với người dùng và xử lý dữ liệu văn bản phức tạp!
