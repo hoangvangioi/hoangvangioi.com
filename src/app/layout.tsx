@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
 import { Inter } from 'next/font/google'
 import { AdsProvider } from '@/adsense'
-import { GoogleAnalytics } from '@/components/GoogleAnalytics'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { DocsProvider } from '@/app/provider'
 import Footer from '@/components/Footer'
-import { GITHUB_USER, footer, urlBase, MONETAG } from '@config'
+import { GITHUB_USER, footer, urlBase, MONETAG, GA_MEASUREMENT_ID } from '@config'
 import type { Metadata, Viewport } from 'next'
 import { DocsLayout } from 'fumadocs-ui/layout'
 import { utils } from '@/utils/source'
@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 			<head>
 				<script src={MONETAG.SCRIPT_URL} data-zone={MONETAG.ZONE_ID} async data-cfasync="false"></script>
 				{/* Google Analytics */}
-				<GoogleAnalytics />
+				{GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
 			</head>
 			<body className="flex min-h-screen flex-col">
 				<AdsProvider>
