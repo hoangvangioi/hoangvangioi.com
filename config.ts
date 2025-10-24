@@ -16,6 +16,9 @@ export const MONETAG = {
 	SCRIPT_URL: process.env.NEXT_PUBLIC_MONETAG_SCRIPT_URL ?? '',
 }
 
+// Google Analytics Configuration
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ''
+
 export const urlBase = new URL(SITE_URL)
 
 export const domain = urlBase.origin
