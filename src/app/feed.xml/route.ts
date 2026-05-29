@@ -1,39 +1,53 @@
-import RSS from 'rss'
-import { utils } from '@/utils/source'
-import { SITE_URL, site } from '@config'
+import { Feed } from 'feed';
+import { source } from '@/lib/source';
+import { SITE_URL, site } from '@/lib/shared';
 
 export function GET() {
-	const feed = new RSS({
-		title: `${site.site_name} Blog`,
-		description: `${site.site_name} Blog`,
-		generator: 'RSS for Node and Next.js',
-		feed_url: `${SITE_URL}/feed.xml`,
-		site_url: `${SITE_URL}`,
-		image_url: `${SITE_URL}/favicon.ico`,
-		managingEditor: `${site.email} (${site.author})`,
-		webMaster: `${site.email} (${site.author})`,
-		copyright: `Copyright ${new Date().getFullYear().toString()}, ${site.author}`,
-		language: 'vi',
-		pubDate: new Date().toUTCString(),
-		ttl: 60,
-	})
+  const feed = new Feed({
+    title: `${site.site_name} Blog`,
+    description: `${site.site_name} Blog`,
+    id: SITE_URL,
+    link: SITE_URL,
+    language: 'vi',
+    image: `${SITE_URL}/favicon.ico`,
+    favicon: `${SITE_URL}/favicon.ico`,
+    copyright: `Copyright ${new Date().getFullYear()}, ${site.author}`,
+    generator: 'Feed for Next.js',
+    feedLinks: {
+      rss2: `${SITE_URL}/feed.xml`,
+    },
+    author: {
+      name: site.author,
+      email: site.email,
+      link: SITE_URL,
+    },
+  });
 
-	utils.getPages().map((post) => {
-		feed.item({
-			title: post.data.title,
-			description: post.data.description ?? '',
-			guid: `${SITE_URL}${post.url}`,
-			url: `${SITE_URL}${post.url}`,
-			categories: post.data.tags || [],
-			author: post.data.authors[0],
-			date: post.data.date,
-		})
-	})
+  source.getPages().forEach((post) => {
+    feed.addItem({
+      title: post.data.title,
+      id: `${SITE_URL}${post.url}`,
+      link: `${SITE_URL}${post.url}`,
+      description: post.data.description ?? '',
+      category: (post.data.tags || []).map((tag) => ({
+        name: tag,
+      })),
+      author: [
+        {
+          name: post.data.authors?.[0] ?? site.author,
+        },
+      ],
+      date: new Date(post.data.date),
+    });
+  });
 
-	return new Response(feed.xml({ indent: true }), {
-		headers: {
-			'Content-Type': 'application/rss+xml; charset=utf-8',
-		},
-		status: 200,
-	})
+  return new Response(feed.rss2(), {
+    headers: {
+      'Content-Type': 'application/rss+xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+    },
+    status: 200,
+  });
 }
+
+export const dynamic = 'force-static';

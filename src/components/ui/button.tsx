@@ -1,13 +1,30 @@
-import { cva } from 'class-variance-authority'
+import { cva } from 'class-variance-authority';
 
 export const buttonVariants = cva(
-	'px-4 py-2 rounded-lg font-medium text-sm flex flex-row gap-2 items-center justify-center',
-	{
-		variants: {
-			color: {
-				primary: 'bg-primary text-primary-foreground transition-colors hover:bg-primary/80',
-				secondary: 'bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80',
-			},
-		},
-	},
-)
+  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-fd-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fd-ring disabled:pointer-events-none disabled:opacity-50',
+  {
+    variants: {
+      variant: {
+        default:
+          'bg-fd-primary text-fd-primary-foreground shadow-inner shadow-fd-background/20 hover:bg-fd-primary/90',
+        outline: 'border hover:bg-fd-accent hover:text-fd-accent-foreground',
+        grow: 'border bg-gradient-to-t from-fd-primary/10 shadow-inner shadow-fd-primary/10 hover:bg-fd-accent/50 hover:text-fd-accent-foreground',
+        secondary:
+          'border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground',
+        ghost: 'hover:bg-fd-accent hover:text-fd-accent-foreground',
+        link: 'text-fd-primary underline-offset-4 hover:underline',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        icon: 'p-1.5',
+        sm: 'h-9 px-3',
+        lg: 'h-11 px-6',
+        xs: 'px-2 py-1.5 text-xs',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  },
+);
