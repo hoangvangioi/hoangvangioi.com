@@ -26,20 +26,20 @@ Here are the key files and directories you should know about if you want to expl
 
 ### Content & Layout Configuration
 
-* `lib/source.ts`: Content source adapter using Fumadocs [`loader()`](https://fumadocs.dev/docs/headless/source-api) to fetch and manage MDX files.
-* `lib/layout.shared.tsx`: Shared UI options and configurations for layouts.
-* `source.config.ts`: Main configuration for Fumadocs MDX (frontmatter schema, collections, etc.).
+- `lib/source.ts`: Content source adapter using Fumadocs [`loader()`](https://fumadocs.dev/docs/headless/source-api) to fetch and manage MDX files.
+- `lib/layout.shared.tsx`: Shared UI options and configurations for layouts.
+- `source.config.ts`: Main configuration for Fumadocs MDX (frontmatter schema, collections, etc.).
 
 ### Routing Table
 
-| Route / File | Type | Description |
-| :--- | :--- | :--- |
-| `app/(home)/page.tsx` | Page | The main landing page of your blog. |
-| `app/posts/[slug]/page.tsx`| Dynamic Page | Main blog post renderer powered by Fumadocs v16. |
-| `app/api/search/route.ts` | Route Handler | Internal search API integration. |
-| `app/feed.xml/route.ts` | RSS Feed | Automatically generates RSS feed for SEO. |
-| `app/llms.txt/route.ts` | AI Friendly | Provides full blog context optimized for LLMs/AI crawlers. |
-| `app/og/posts/[slug]/route.tsx`| Dynamic Image | Dynamically generates Open Graph sharing images for each post. |
+| Route / File                    | Type          | Description                                                    |
+| :------------------------------ | :------------ | :------------------------------------------------------------- |
+| `app/(home)/page.tsx`           | Page          | The main landing page of your blog.                            |
+| `app/posts/[slug]/page.tsx`     | Dynamic Page  | Main blog post renderer powered by Fumadocs v16.               |
+| `app/api/search/route.ts`       | Route Handler | Internal search API integration.                               |
+| `app/feed.xml/route.ts`         | RSS Feed      | Automatically generates RSS feed for SEO.                      |
+| `app/llms.txt/route.ts`         | AI Friendly   | Provides full blog context optimized for LLMs/AI crawlers.     |
+| `app/og/posts/[slug]/route.tsx` | Dynamic Image | Dynamically generates Open Graph sharing images for each post. |
 
 ---
 
@@ -55,5 +55,5 @@ If you wish to contribute or clone this for your own use:
 
 ## Learn More
 
-* [Fumadocs Documentation](https://fumadocs.dev) - Learn more about Fumadocs features and components.
-* [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and APIs.
+- [Fumadocs Documentation](https://fumadocs.dev) - Learn more about Fumadocs features and components.
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and APIs.
