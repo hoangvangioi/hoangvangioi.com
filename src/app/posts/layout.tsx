@@ -14,6 +14,9 @@ export default function Layout({ children }: LayoutProps<'/posts'>) {
         tree={tree}
         sidebar={{ enabled: false }}
         nav={{ enabled: false }}
+        containerProps={{
+          className: '[--fd-banner-height:3.5rem]',
+        }}
       >
         {children}
       </DocsLayout>
