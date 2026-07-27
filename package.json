@@ -33,7 +33,7 @@
     "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.18",
     "prettier": "^3.8.3",
     "serve": "^14.2.6",
     "tailwindcss": "^4.3.0",
