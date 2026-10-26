@@ -23,6 +23,15 @@ export function baseOptions(): BaseLayoutProps {
       transparentMode: 'top',
     },
     githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
-    links: [],
+    links: [
+      {
+        text: 'Giới thiệu',
+        url: '/about/',
+      },
+      {
+        text: 'Liên hệ',
+        url: '/contact/',
+      },
+    ],
   };
 }

@@ -75,6 +75,14 @@ export const footer: FooterItem[] = [
     href: '/',
   },
   {
+    label: 'Giới thiệu',
+    href: '/about/',
+  },
+  {
+    label: 'Liên hệ',
+    href: '/contact/',
+  },
+  {
     label: 'Quyền riêng tư',
     href: '/privacy/',
   },
