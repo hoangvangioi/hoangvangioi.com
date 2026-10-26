@@ -1,0 +1,63 @@
+import { SITE_URL } from '@/lib/shared';
+
+export const metadata = {
+  title: 'Giới thiệu',
+  description:
+    'Giới thiệu về Hoàng Văn Giỏi – Kỹ sư phần mềm & Hệ thống nhúng, tác giả của hoangvangioi.com.',
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
+  openGraph: {
+    type: 'profile',
+    url: `${SITE_URL}/about`,
+    title: 'Giới thiệu | Hoàng Văn Giỏi',
+    description:
+      'Giới thiệu về Hoàng Văn Giỏi – Kỹ sư phần mềm & Hệ thống nhúng, tác giả của hoangvangioi.com.',
+    images: ['/cover.webp'],
+  },
+};
+
+# Giới thiệu về Hoàng Văn Giỏi
+
+Xin chào, tôi là **Hoàng Văn Giỏi**, một Kỹ sư phần mềm và Hệ thống nhúng (Embedded & Software Engineer) hiện đang sinh sống và làm việc tại **Hà Nội, Việt Nam**. 
+
+Website [hoangvangioi.com](https://hoangvangioi.com) là không gian cá nhân nơi tôi ghi chép, hệ thống hóa và chia sẻ những kiến thức, trải nghiệm kỹ thuật thực chiến tích lũy qua quá trình học tập và làm việc.
+
+## Chuyên môn & Định hướng nghề nghiệp
+
+Hành trình công nghệ của tôi khởi nguồn từ niềm đam mê tìm hiểu cách máy tính và phần cứng thực sự hoạt động ở mức độ sâu nhất. Trọng tâm nghiên cứu và phát triển của tôi bao gồm:
+
+- **Lập trình hệ thống & C/C++:** Đi sâu vào bản chất của kiến trúc máy tính, quản lý bộ nhớ thủ công (stack, heap, malloc/free), con trỏ, cấu trúc dữ liệu phức tạp (struct, union), thao tác bit (bitwise operators) và tối ưu hóa hiệu năng cấp thấp.
+- **Embedded Systems & Firmware:** Lập trình vi điều khiển (đặc biệt là dòng vi điều khiển STMicroelectronics / STM32), giao tiếp ngoại vi (UART, SPI, I2C, CAN), cấu hình bootloader và hệ thống nhúng thời gian thực (RTOS).
+- **Embedded Linux & Ảo hóa:** Xây dựng, tùy biến và mô phỏng hệ thống Linux nhúng bằng QEMU (mô phỏng bo mạch ARM như Raspberry Pi 4), quản trị môi trường Arch Linux và debug không dây với Android ADB.
+- **Công cụ phát triển hiệu năng cao:** Tối ưu hóa quy trình làm việc với trình soạn thảo Vim / Neovim, viết kịch bản tự động hóa Bash Shell, quản lý mã nguồn Git và xây dựng dự án với CMake / Makefile.
+- **Web hiện đại & Cloud:** Mở rộng sang kiến trúc web hiện đại với TypeScript, React / Next.js, Tailwind CSS, và hạ tầng điện toán đám mây biên (Cloudflare Workers, Cloudflare Pages).
+
+## Mục tiêu của blog này
+
+Tôi tin rằng **cách tốt nhất để hiểu sâu một vấn đề là giải thích lại nó một cách rõ ràng nhất**. Blog này được xây dựng với các tôn chỉ cốt lõi:
+
+1. **Thực tế & Trực quan:** Không chỉ dừng lại ở lý thuyết suông, mọi bài viết đều đi kèm mã nguồn mẫu, kịch bản gỡ lỗi (debugging với GDB) và giải thích từng bước.
+2. **Hệ thống hóa kiến thức:** Các chuỗi bài hướng dẫn lập trình C từ cơ bản đến nâng cao, thủ thuật quản trị Linux và kỹ thuật làm chủ Vim được sắp xếp khoa học để người đọc có thể tiếp cận tuần tự.
+3. **Đóng góp cho cộng đồng lập trình Việt Nam:** Cung cấp tài liệu kỹ thuật chuyên sâu bằng tiếng Việt có chất lượng cao, giúp các bạn sinh viên và kỹ sư trẻ tiếp cận công nghệ hệ thống dễ dàng hơn.
+
+## Công nghệ & Công cụ thường dùng
+
+- **Ngôn ngữ:** C, C++, Python, TypeScript, Bash Shell, Markdown.
+- **Hệ thống & Phần cứng:** Linux (Arch Linux, Ubuntu), STMicroelectronics (STM32), Raspberry Pi, QEMU ARM.
+- **Công cụ lập trình & Debug:** Neovim, Vim, GNU Debugger (GDB), CMake, GCC/Clang, Git, ADB.
+- **Web & Nền tảng Cloud:** Next.js (Fumadocs), React, Tailwind CSS, Cloudflare Pages, Cloudflare Workers.
+
+## Về kiến trúc website
+
+Trang web này được xây dựng trên nền tảng Next.js kết hợp với bộ công cụ tài liệu Fumadocs, sử dụng nội dung MDX và triển khai trên hạ tầng phân tán toàn cầu của Cloudflare Pages.
+
+Toàn bộ mã nguồn và ví dụ minh họa được công khai trên GitHub tại [github.com/hoangvangioi](https://github.com/hoangvangioi). Website cũng được thiết kế chuẩn mực sẵn sàng cho các tác tử AI (AI Agents) thông qua cơ chế thương lượng nội dung `Accept: text/markdown`, cung cấp tệp định danh ngữ cảnh [llms.txt](/llms.txt) và nguồn cấp dữ liệu tổng hợp [llms-full.txt](/llms-full.txt).
+
+## Kết nối & Hợp tác
+
+Nếu bạn có câu hỏi về một bài viết, phát hiện lỗi cần đính chính, hoặc muốn trao đổi về cơ hội hợp tác kỹ thuật, vui lòng ghé thăm trang [Liên hệ](/contact) hoặc gửi email trực tiếp cho tôi tại [admin@hoangvangioi.com](mailto:admin@hoangvangioi.com).
+
+export default ({ children }) => <div className="prose">{children}</div>;
+
+export const dynamic = 'force-static';
