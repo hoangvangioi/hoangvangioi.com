@@ -25,7 +25,16 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
   },
   openGraph: {
-    images: '/cover.webp',
+    type: 'website',
+    url: SITE_URL,
+    images: [
+      {
+        url: '/cover.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Hoàng Văn Giỏi - Blog lưu trữ và chia sẻ kiến thức',
+      },
+    ],
     title: {
       template: 'Hoàng Văn Giỏi - %s',
       default: 'Hoàng Văn Giỏi - Blog lưu trữ và chia sẻ kiến thức',
