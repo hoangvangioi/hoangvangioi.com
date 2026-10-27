@@ -42,7 +42,7 @@ export function BlogItem({
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <p className="text-lg font-medium">{page.data.title}</p>
+        <h3 className="text-lg font-medium leading-snug">{page.data.title}</h3>
 
         <p className="overflow-hidden overflow-ellipsis whitespace-nowrap text-sm text-muted-foreground">
           {page.data.description}
