@@ -38,7 +38,7 @@ export default async function TagPage(props: {
       </div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {pages.map((page, i) => (
-          <BlogItem key={page.data.title} page={page} priority={i === 0} />
+          <BlogItem key={page.url} page={page} priority={i === 0} />
         ))}
       </div>
     </div>
