@@ -25,7 +25,7 @@ export function BlogItem({
             className="object-cover"
             fill
             sizes="(max-width: 760px) 90vw, 400px"
-            preload={priority}
+            loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
           />
         ) : (

@@ -97,7 +97,6 @@ export default async function Page(props: PageProps<'/posts/[slug]'>) {
             alt={page.data.title}
             fill
             preload
-            fetchPriority="high"
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 860px"
           />
