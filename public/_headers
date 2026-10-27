@@ -1,4 +1,3 @@
-/
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
@@ -6,30 +5,7 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-DNS-Prefetch-Control: on
   Permissions-Policy: geolocation=(), camera=(), microphone=(), autoplay=(), encrypted-media=(), fullscreen=*
-
-  Content-Security-Policy:
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval'
-      https://pagead2.googlesyndication.com
-      https://adservice.google.com
-      https://googleads.g.doubleclick.net
-      https://www.googletagservices.com
-      https://tpc.googlesyndication.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' data: blob:
-      https://*.google.com
-      https://*.googlesyndication.com
-      https://*.doubleclick.net;
-    frame-src
-      https://googleads.g.doubleclick.net
-      https://*.googlesyndication.com
-      https://*.google.com;
-    connect-src 'self'
-      https://*.googlesyndication.com
-      https://*.doubleclick.net
-      https://adservice.google.com;
-    worker-src blob:;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://tpc.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.google.com; connect-src 'self' https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com; worker-src blob:;
 
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
