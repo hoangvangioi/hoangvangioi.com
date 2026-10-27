@@ -61,10 +61,10 @@ const Stacks = () => {
         aria-hidden="true"
         className="group flex flex-row gap-5 overflow-hidden py-4 [mask-image:linear-gradient(to_right,_transparent_0%,_rgba(0,_0,_0,_1.0)_10%,_rgba(0,_0,_0,_1.0)_90%,_transparent_100%)]"
       >
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="flex shrink-0 animate-marquee-left flex-row justify-around gap-5 group-hover:[animation-play-state:paused]"
+            className="flex min-w-full shrink-0 animate-marquee-left flex-row justify-around gap-5 group-hover:[animation-play-state:paused]"
           >
             <SiC className="size-10" />
             <SiCplusplus className="size-10" />
@@ -79,10 +79,10 @@ const Stacks = () => {
         aria-hidden="true"
         className="group flex flex-row gap-5 overflow-hidden py-4 [mask-image:linear-gradient(to_right,_transparent_0%,_rgba(0,_0,_0,_1.0)_10%,_rgba(0,_0,_0,_1.0)_90%,_transparent_100%)]"
       >
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="flex shrink-0 animate-marquee-left-reverse flex-row justify-around gap-5 group-hover:[animation-play-state:paused]"
+            className="flex min-w-full shrink-0 animate-marquee-left-reverse flex-row justify-around gap-5 group-hover:[animation-play-state:paused]"
           >
             <SiGit className="size-10" />
             <SiLinux className="size-10" />
