@@ -3,7 +3,6 @@ import { Provider } from '@/components/provider';
 import type { Metadata, Viewport } from 'next';
 import Footer from '@/components/Footer';
 import './global.css';
-import 'katex/dist/katex.css';
 import { footer, SITE_URL } from '@/lib/shared';
 import { Header } from '@/components/header';
 import { baseOptions } from '@/lib/layout.shared';

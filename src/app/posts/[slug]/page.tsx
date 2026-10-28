@@ -14,6 +14,7 @@ import { getTagHref, source } from '@/lib/source';
 import { gitConfig, authors, SITE_URL } from '@/lib/shared';
 import { getMDXComponents } from '@/components/mdx';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import 'katex/dist/katex.css';
 
 export default async function Page(props: PageProps<'/posts/[slug]'>) {
   const params = await props.params;
