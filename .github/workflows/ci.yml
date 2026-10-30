@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Huỷ lần chạy cũ của cùng 1 PR để không tốn phút CI
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck · Lint · Format · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          # >=22 theo `engines` trong package.json. Font Inter đã self-host
+          # trong public/fonts/ nên build KHÔNG cần gọi fonts.googleapis.com.
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        # `postinstall` chạy `fumadocs-mdx` để sinh .source/
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run types:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: Build (static export)
+        run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://hoangvangioi.com' }}
+
+      - name: Verify static output
+        run: |
+          set -euo pipefail
+          test -f out/index.html
+          test -f out/sitemap.xml
+          test -f out/robots.txt
+          test -f out/feed.xml
+          test -f out/api/search
+          # Không được rò rỉ localhost vào SEO metadata khi build production
+          if grep -rl "localhost:3000" out/sitemap.xml out/robots.txt out/feed.xml; then
+            echo "::error::SITE_URL chưa được set — sitemap/robots/feed đang trỏ về localhost"
+            exit 1
+          fi
+          echo "Static export OK ($(du -sh out | cut -f1))"
+
+      - name: Upload static site
+        uses: actions/upload-artifact@v4
+        with:
+          name: out
+          path: out
+          retention-days: 7
+          if-no-files-found: error

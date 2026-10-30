@@ -4,6 +4,23 @@ import type { FooterItem } from '@/lib/shared';
 import { gitConfig } from '@/lib/shared';
 import { LogoSVG } from '@/components/LogoSVG';
 
+const FIRST_YEAR = 2022;
+
+/**
+ * Năm hiện tại tính theo múi giờ Việt Nam, chốt lúc BUILD (repo dùng
+ * `output: 'export'` nên giá trị này deterministic, không gây lệch hydration).
+ * Trước đây hardcode "2022" nên càng về sau càng sai.
+ */
+const CURRENT_YEAR = Number(
+  new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date()),
+);
+
+const COPYRIGHT_RANGE =
+  CURRENT_YEAR > FIRST_YEAR ? `${FIRST_YEAR}–${CURRENT_YEAR}` : `${FIRST_YEAR}`;
+
 export default function Footer({ items }: { items: FooterItem[] }) {
   return (
     <footer className="mt-auto w-full border-t p-8 pb-12">
@@ -23,7 +40,7 @@ function Info() {
         <p className="text-xl font-bold">Hoàng Văn Giỏi</p>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        &copy; Copyright <time dateTime="2022">2022</time>. All rights reserved.
+        &copy; {COPYRIGHT_RANGE} Hoàng Văn Giỏi. Bảo lưu mọi quyền.
       </p>
     </div>
   );
@@ -52,7 +69,7 @@ function Item({ item }: { item: FooterItem[] }) {
         className="flex flex-row items-center text-sm text-muted-foreground transition-colors hover:text-accent-foreground"
       >
         <Star className="mr-2 size-4" aria-hidden="true" />
-        Give us a star
+        Tặng sao cho repo
       </a>
     </div>
   );

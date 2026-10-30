@@ -1,15 +1,15 @@
-import { SITE_URL } from '@/lib/shared';
+import { siteUrl } from '@/lib/shared';
 
 export const metadata = {
   title: 'Liên hệ',
   description:
     'Thông tin liên hệ Hoàng Văn Giỏi – Email, GitHub, Mạng xã hội. Sẵn sàng tiếp nhận phản hồi bài viết, trao đổi kỹ thuật và cơ hội hợp tác.',
   alternates: {
-    canonical: `${SITE_URL}/contact`,
+    canonical: siteUrl('/contact'),
   },
   openGraph: {
     type: 'website',
-    url: `${SITE_URL}/contact`,
+    url: siteUrl('/contact'),
     title: 'Liên hệ | Hoàng Văn Giỏi',
     description:
       'Thông tin liên hệ Hoàng Văn Giỏi – Email, GitHub, Mạng xã hội. Sẵn sàng tiếp nhận phản hồi bài viết, trao đổi kỹ thuật và cơ hội hợp tác.',
@@ -54,6 +54,8 @@ Nếu bạn là một tác tử trí tuệ nhân tạo (AI Agent) hoặc bot tì
 
 Bạn muốn tìm hiểu thêm về định hướng và chuyên môn của tôi? Mời bạn xem trang [Giới thiệu](/about).
 
-export default ({ children }) => <div className="prose">{children}</div>;
+export default ({ children }) => (
+  <div className="prose">{children}</div>
+);
 
 export const dynamic = 'force-static';

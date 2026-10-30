@@ -2,8 +2,18 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { gitConfig } from './shared';
 import { LogoSVG } from '@/components/LogoSVG';
 
+let cached: BaseLayoutProps | undefined;
+
+/**
+ * Options cho header, cache ở module scope.
+ *
+ * `Header` (client component) bọc phần phân loại nav/menu trong
+ * `useMemo(..., [links, githubUrl])`. Trước đây hàm này trả về object + array
+ * `links` MỚI ở mỗi lần gọi nên tham chiếu luôn khác nhau: memo không bao giờ
+ * trúng cache và `resolveLinkItems` chạy lại mỗi lần render.
+ */
 export function baseOptions(): BaseLayoutProps {
-  return {
+  cached ??= {
     nav: {
       title: (
         <>
@@ -34,4 +44,6 @@ export function baseOptions(): BaseLayoutProps {
       },
     ],
   };
+
+  return cached;
 }

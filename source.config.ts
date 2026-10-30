@@ -21,6 +21,12 @@ export const posts = defineCollections({
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
     authors: z.array(z.string()).default([]),
+    /**
+     * Bật khi bài có công thức LaTeX (`$...$` / `$$...$$`).
+     * CSS KaTeX (~19 KB) chỉ được tải cho những bài khai báo cờ này —
+     * xem `src/components/KatexStyles.tsx`.
+     */
+    math: z.boolean().default(false),
     date: z
       .string()
       .optional()

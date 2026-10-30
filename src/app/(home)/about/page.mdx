@@ -1,15 +1,15 @@
-import { SITE_URL } from '@/lib/shared';
+import { siteUrl } from '@/lib/shared';
 
 export const metadata = {
   title: 'Giới thiệu',
   description:
     'Giới thiệu về Hoàng Văn Giỏi – Kỹ sư phần mềm & Hệ thống nhúng, tác giả của hoangvangioi.com.',
   alternates: {
-    canonical: `${SITE_URL}/about`,
+    canonical: siteUrl('/about'),
   },
   openGraph: {
     type: 'profile',
-    url: `${SITE_URL}/about`,
+    url: siteUrl('/about'),
     title: 'Giới thiệu | Hoàng Văn Giỏi',
     description:
       'Giới thiệu về Hoàng Văn Giỏi – Kỹ sư phần mềm & Hệ thống nhúng, tác giả của hoangvangioi.com.',
@@ -58,6 +58,8 @@ Toàn bộ mã nguồn và ví dụ minh họa được công khai trên GitHub 
 
 Nếu bạn có câu hỏi về một bài viết, phát hiện lỗi cần đính chính, hoặc muốn trao đổi về cơ hội hợp tác kỹ thuật, vui lòng ghé thăm trang [Liên hệ](/contact) hoặc gửi email trực tiếp cho tôi tại [admin@hoangvangioi.com](mailto:admin@hoangvangioi.com).
 
-export default ({ children }) => <div className="prose">{children}</div>;
+export default ({ children }) => (
+  <div className="prose">{children}</div>
+);
 
 export const dynamic = 'force-static';

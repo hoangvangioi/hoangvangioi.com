@@ -1,4 +1,3 @@
-import { Inter } from 'next/font/google';
 import { Provider } from '@/components/provider';
 import type { Metadata, Viewport } from 'next';
 import Footer from '@/components/Footer';
@@ -6,12 +5,6 @@ import './global.css';
 import { footer, SITE_URL } from '@/lib/shared';
 import { Header } from '@/components/header';
 import { baseOptions } from '@/lib/layout.shared';
-
-const inter = Inter({
-  weight: '400',
-  display: 'swap',
-  subsets: ['latin', 'vietnamese'],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -73,8 +66,19 @@ export const viewport: Viewport = {
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="vi" className={inter.className} suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen [--fd-layout-width:1400px]">
+    <html lang="vi" suppressHydrationWarning>
+      {/*
+        KHÔNG tự thêm <link rel="preload" as="font"> cho Inter:
+        React 19 (Float) hoist link lên đầu <head> và Next vẫn render thêm bản
+        sao tại chỗ, nên 1 link trong JSX hoá ra 2 link trong HTML (đã đo:
+        4 link cho 2 file). Thay vào đó dựa vào:
+          - Next đã preload chunk CSS (chứa @font-face) ngay trong <head>
+            → font được phát hiện ngay sau khi parse CSS;
+          - `font-display: swap` nên chữ hiển thị tức thì bằng font dự phòng,
+            không bị chặn render.
+        Chi tiết @font-face: xem src/app/global.css.
+      */}
+      <body className="flex min-h-screen flex-col font-sans [--fd-layout-width:1400px]">
         <Provider>
           <Header {...baseOptions()} />
           {children}

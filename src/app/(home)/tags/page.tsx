@@ -2,11 +2,15 @@ import { LinkButton } from '@/components/LinkButton';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getTagHref, getTags } from '@/lib/source';
-import { SITE_URL, type TagInfo } from '@/lib/shared';
+import { siteUrl, type TagInfo } from '@/lib/shared';
 
 export const metadata: Metadata = {
+  title: 'Tất cả các thẻ',
+  description:
+    'Danh sách toàn bộ chủ đề có trên blog: C/C++, Embedded Linux, STM32, Vim, GDB, Android ADB và nhiều hơn nữa.',
   alternates: {
-    canonical: `${SITE_URL}/tags`,
+    // `trailingSlash: true` → canonical phải khớp URL thật
+    canonical: siteUrl('/tags'),
   },
 };
 

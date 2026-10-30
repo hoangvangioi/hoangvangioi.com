@@ -1,0 +1,19 @@
+# Build output & deps
+.next/
+out/
+.source/
+node_modules/
+package-lock.json
+tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Asset vendored từ npm (KaTeX): `katex.min.css` là bản ĐÃ MINIFY, để Prettier
+# format lại sẽ phình file và làm nhiễu diff mỗi lần nâng cấp katex.
+public/vendor/
+
+# Asset nhị phân / sinh tự động
+public/fonts/*.woff2
+public/**/*.png
+public/**/*.ico
+public/**/*.webp
+content/
