@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SITE_URL } from '@/lib/shared';
+import { SITE_URL, siteUrl } from '@/lib/shared';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,8 +8,9 @@ export default function robots(): MetadataRoute.Robots {
       allow: ['/'],
       disallow: ['/404', '/~offline'],
     },
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: `${SITE_URL}`,
+    // `siteUrl` tự bỏ slash cuối cho route dạng file (`/sitemap.xml`)
+    sitemap: siteUrl('/sitemap.xml'),
+    host: SITE_URL,
   };
 }
 

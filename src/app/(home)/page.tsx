@@ -3,7 +3,7 @@ import { BlogItem } from '@/components/BlogItem';
 import { LinkButton } from '@/components/LinkButton';
 import { EyeIcon } from 'lucide-react';
 import { gitConfig } from '@/lib/shared';
-import { source } from '@/lib/source';
+import { sortedPages } from '@/lib/source';
 import { About } from '@/components/About';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 
@@ -14,9 +14,8 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const pages = [...source.getPages()].sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-  );
+  // Đã sort + cache sẵn trong `src/lib/source.ts`
+  const pages = sortedPages();
 
   return (
     <div className="flex flex-1 flex-col gap-8">

@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 import { TypeTable } from 'fumadocs-ui/components/type-table';
@@ -13,12 +14,22 @@ import {
   Warning,
   Accordion,
 } from '@/components/mdx/index';
-import { ImageZoom } from 'fumadocs-ui/components/image-zoom';
+import {
+  ImageZoom,
+  type ImageZoomProps,
+} from 'fumadocs-ui/components/image-zoom';
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
-    img: (props: any) => <ImageZoom {...props} />,
+    // `MDXComponents['img']` đòi props của thẻ <img> thường (src có thể là
+    // `string | Blob`), còn `ImageZoom` nhận props kiểu next/image
+    // (src: `string | StaticImport`). Hai kiểu không giao nhau nên phải khai
+    // báo tham số theo MDX rồi cast khi truyền xuống — thay vì `any` như trước
+    // (any khiến mọi lỗi prop của ảnh trong MDX lọt qua typecheck).
+    img: (props: ComponentProps<'img'>) => (
+      <ImageZoom {...(props as unknown as ImageZoomProps)} />
+    ),
     ImageZoom,
     Adsense,
     Tip,

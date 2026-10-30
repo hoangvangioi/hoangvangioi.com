@@ -1,20 +1,22 @@
 import { Feed } from 'feed';
-import { source } from '@/lib/source';
-import { SITE_URL, site } from '@/lib/shared';
+import { sortedPages } from '@/lib/source';
+import { SITE_URL, site, siteUrl } from '@/lib/shared';
 
 export function GET() {
   const feed = new Feed({
     title: `${site.site_name} Blog`,
-    description: `${site.site_name} Blog`,
+    description: site.description,
     id: SITE_URL,
-    link: SITE_URL,
+    link: siteUrl('/'),
     language: 'vi',
-    image: `${SITE_URL}/favicon.ico`,
-    favicon: `${SITE_URL}/favicon.ico`,
+    image: siteUrl('/icon.png'),
+    favicon: siteUrl('/favicon.ico'),
+    // Năm cố định theo thời điểm build, không phải `new Date().getFullYear()`
+    // lồng trong template (kết quả như nhau nhưng rõ ý hơn).
     copyright: `Copyright ${new Date().getFullYear()}, ${site.author}`,
     generator: 'Feed for Next.js',
     feedLinks: {
-      rss2: `${SITE_URL}/feed.xml`,
+      rss2: siteUrl('/feed.xml'),
     },
     author: {
       name: site.author,
@@ -23,21 +25,26 @@ export function GET() {
     },
   });
 
-  source.getPages().forEach((post) => {
+  // `sortedPages()`: RSS phải xếp mới → cũ. Trước đây dùng `source.getPages()`
+  // (thứ tự theo file hệ thống) nên thứ tự item trong feed không ổn định.
+  sortedPages().forEach((post) => {
+    const url = siteUrl(post.url);
+
     feed.addItem({
       title: post.data.title,
-      id: `${SITE_URL}${post.url}`,
-      link: `${SITE_URL}${post.url}`,
+      id: url,
+      link: url,
       description: post.data.description ?? '',
-      category: (post.data.tags || []).map((tag) => ({
-        name: tag,
-      })),
+      category: post.data.tags.map((tag) => ({ name: tag })),
       author: [
         {
           name: post.data.authors?.[0] ?? site.author,
         },
       ],
-      date: new Date(post.data.date),
+      date:
+        post.data.date instanceof Date
+          ? post.data.date
+          : new Date(post.data.date),
     });
   });
 

@@ -11,14 +11,23 @@ import {
   type SharedProps,
 } from 'fumadocs-ui/components/dialog/search';
 import { useDocsSearch } from 'fumadocs-core/search/client';
-import { create } from '@orama/orama';
+import { create } from 'zbsearch';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
+import { vietnameseTokenizer } from '@/lib/search-tokenizer';
 
-function initOrama() {
+/**
+ * Fumadocs v16.10+ dùng ZBSearch thay Orama, và `initOrama` đã bị đánh dấu
+ * deprecated → dùng `initDB`.
+ */
+function initDB() {
   return create({
     schema: { _: 'string' },
-    // https://docs.orama.com/docs/orama-js/supported-languages
-    language: 'english',
+    // PHẢI dùng đúng tokenizer đã build index ở `src/app/api/search/route.ts`,
+    // nếu không token phía query lệch với token phía index và không match.
+    // Không truyền `language` kèm `tokenizer` (engine sẽ throw
+    // NO_LANGUAGE_WITH_CUSTOM_TOKENIZER).
+    // Chi tiết lý do cần tokenizer riêng: xem `src/lib/search-tokenizer.ts`.
+    components: { tokenizer: vietnameseTokenizer },
   });
 }
 
@@ -26,7 +35,7 @@ export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n
   const { search, setSearch, query } = useDocsSearch({
     type: 'static',
-    initOrama,
+    initDB,
     locale,
   });
 

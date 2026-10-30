@@ -1,16 +1,29 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { type Post as Page } from '@/lib/source';
+import { type Post } from '@/lib/source';
+import { formatShortDate, toDateOnly } from '@/lib/date';
+
+/**
+ * `Post` là `ReturnType<typeof source.getPage>` nên bao gồm cả `undefined`
+ * (trang không tìm thấy). Component này chỉ nhận phần tử lấy từ
+ * `sortedPages()` — luôn tồn tại — nên khai báo `NonNullable` để type bên
+ * trong không phải narrow lại.
+ *
+ * (Code cũ xử lý bằng `if (!page) notFound()` ngay trong component con của một
+ * danh sách: nhánh đó không bao giờ chạy, mà nếu chạy thì lại biến CẢ trang
+ * thành 404 thay vì chỉ bỏ qua một card.)
+ */
+type BlogItemPage = NonNullable<Post>;
 
 export function BlogItem({
   page,
   priority = false,
 }: {
-  page: Page;
+  page: BlogItemPage;
   priority?: boolean;
 }) {
-  if (!page) notFound();
+  const date =
+    page.data.date instanceof Date ? page.data.date : new Date(page.data.date);
 
   return (
     <Link
@@ -48,9 +61,12 @@ export function BlogItem({
           {page.data.description}
         </p>
 
-        <p className="mt-auto pt-2 text-end text-sm text-muted-foreground">
-          {page.data.date.toLocaleDateString()}
-        </p>
+        <time
+          dateTime={toDateOnly(date)}
+          className="mt-auto pt-2 text-end text-sm text-muted-foreground"
+        >
+          {formatShortDate(date)}
+        </time>
       </div>
     </Link>
   );

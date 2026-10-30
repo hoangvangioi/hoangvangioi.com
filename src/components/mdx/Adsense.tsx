@@ -6,10 +6,10 @@ import clsx from 'clsx';
 import { AD_CLIENT, AD_SLOT } from '@/lib/shared';
 
 export function Adsense() {
-  const { failed } = useAdsContext();
+  const { failed, disabled } = useAdsContext();
 
   useEffect(() => {
-    if (failed) return;
+    if (failed || disabled) return;
 
     try {
       // eslint-disable-next-line
@@ -19,7 +19,11 @@ export function Adsense() {
     } catch (e) {
       console.error(`[Adsense] ${(e as Error).message}`);
     }
-  }, [failed]);
+  }, [failed, disabled]);
+
+  // Chưa cấu hình NEXT_PUBLIC_AD_CLIENT / NEXT_PUBLIC_AD_SLOT lúc build:
+  // render rỗng thay vì khung "không có quảng cáo" + <ins data-ad-client="ca-pub-">.
+  if (disabled) return null;
 
   if (failed)
     return (

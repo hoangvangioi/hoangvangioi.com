@@ -5,10 +5,23 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-DNS-Prefetch-Control: on
   Permissions-Policy: geolocation=(), camera=(), microphone=(), autoplay=(), encrypted-media=(), fullscreen=*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://tpc.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.google.com; connect-src 'self' https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com; worker-src blob:;
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://adservice.google.com https://googleads.g.doubleclick.net https://www.googletagservices.com https://tpc.googlesyndication.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net; frame-src https://googleads.g.doubleclick.net https://*.googlesyndication.com https://*.google.com; connect-src 'self' https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com; worker-src blob:;
 
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Font tự host trong public/fonts/ — tên file cố định, không đổi giữa các lần
+# build nên cache immutable 1 năm. (Trước đây font Inter lấy từ Google nên phải
+# cho phép fonts.googleapis.com / fonts.gstatic.com trong CSP; nay bỏ được.)
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Ảnh OG sinh từ /og/posts/[slug] là file KHÔNG có đuôi (.png) trong `out/`,
+# nên host sẽ đoán Content-Type sai (octet-stream) và crawler Facebook/X
+# không hiển thị được ảnh. Khai báo tường minh ở đây.
+/og/*
+  Content-Type: image/png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
 /posts/:slug/cover.webp
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
@@ -22,8 +35,19 @@
 /apple-icon.png
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
+/icons/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
 /favicon.ico
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
-/og/*
-  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+# CSS + font KaTeX vendored (chỉ được tải khi bài viết khai báo `math: true`).
+# Tên file KHÔNG hash theo nội dung và chỉ đổi khi nâng cấp katex, nên dùng
+# cache 7 ngày thay vì `immutable` — tránh phục vụ font cũ sau khi bump version.
+# CSP không cần sửa: style-src 'self' và font-src 'self' đã bao trùm.
+/vendor/katex/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800
+
+# Index tìm kiếm tĩnh: nội dung chỉ đổi khi build lại, cho cache 1 ngày.
+/api/search
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
