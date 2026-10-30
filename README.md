@@ -121,15 +121,61 @@ math: false
 
 ## Ghi chú tối ưu
 
-- **Tìm kiếm tiếng Việt:** Orama không hỗ trợ `vietnamese`, còn splitter của
-  `english` coi mọi chữ cái Việt là ký tự phân cách (`'Hướng dẫn'` → `['h','ng','d','n']`).
-  `src/lib/search-tokenizer.ts` tách từ theo Unicode rồi lược dấu, nên gõ
-  `huong dan` hay `hướng dẫn` đều ra kết quả. Tokenizer này **phải** dùng giống
-  nhau ở server (`app/api/search/route.ts`) và client (`components/search.tsx`).
+- **Tìm kiếm tiếng Việt:** engine của fumadocs (nay là `zbsearch`, trước là
+  Orama) không có ngôn ngữ `vietnamese`, còn splitter `english`/`multilingual`
+  coi mọi chữ cái Việt là ký tự phân cách (`'Hướng dẫn'` → `['h','ng','d','n']`)
+  và không lược dấu (`'huong dan'` → 0 hoặc sai kết quả).
+  `src/lib/search-tokenizer.ts` tách từ theo Unicode rồi lược dấu (NFD + `đ/Đ`,
+  vì NFD không phân rã U+0111), nên gõ `huong dan` hay `hướng dẫn` đều ra kết
+  quả. Tokenizer này **phải** dùng giống nhau ở server
+  (`app/api/search/route.ts`) và client (`components/search.tsx`).
+  Không truyền `language` kèm custom tokenizer — engine sẽ ném
+  `NO_LANGUAGE_WITH_CUSTOM_TOKENIZER`.
+- **KaTeX:** CSS + font phục vụ từ `public/vendor/katex/` và chỉ được `<link>`
+  khi frontmatter có `math: true`. Không `import 'katex/dist/katex.css'` vì
+  Turbopack gom CSS theo module graph của trang: cả component render có điều
+  kiện lẫn dynamic import đều vẫn đính 28 KB CSS vào **cả 19** trang bài viết
+  (đã đo, cả hai cách đều thất bại). Chỉ vendor 20 file `.woff2` (296 KB) thay
+  vì cả woff2/woff/ttf (~1,17 MB). Xem `public/vendor/katex/README.md`.
 - **Ảnh OG** sinh ra ở `/og/posts/<slug>` là file không có đuôi trong `out/`,
   nên `public/_headers` khai báo `Content-Type: image/png` cho `/og/*`.
 - **Font** dùng variable weight nên `font-bold` / `font-extrabold` / `font-black`
   là độ đậm thật, không bị trình duyệt vẽ giả đậm.
+
+## Dependency & bảo mật
+
+`package.json` có `overrides` cho hai gói **build-time/dev-only**:
+
+| Override              | Lý do                                                                                                                                                                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compression: ^1.8.2` | `serve@14.2.6` pin cứng `1.8.1` (DoS, GHSA-vc2v-76pw-4v95). Chỉ ảnh hưởng `npm start`/CI, không ship xuống trình duyệt.                                                                                               |
+| `katex: ^0.18.10`     | `rehype-katex`/`micromark-extension-math` kéo 2 bản lồng `0.16.47` (prototype pollution, GHSA-238p-pmpm-9mq7). Ép lên `0.18.10` vừa vá lỗi vừa **khớp phiên bản** với CSS/font vendored trong `public/vendor/katex/`. |
+
+**Cố ý KHÔNG override `image-size` lên 2.x** (dù `npm audit` báo 1 high):
+
+- `image-size` v2 bỏ nhận đường dẫn file — `imageSize('/path/to.png')` ném
+  `TypeError`, việc đọc file chuyển sang `image-size/fromFile` (async).
+- `rehype-img-size@1.0.1` gọi `sizeOf(src)` với `src` là **đường dẫn**, và chỉ
+  có 2 version (1.0.0/1.0.1) — không có bản nào hỗ trợ v2.
+- Override sang v2 làm `npm audit` xanh nhưng **gài bẫy**: hiện 0/19 bài có ảnh
+  trong nội dung MDX (ảnh cover render qua `next/image`) nên `sizeOf` không bao
+  giờ được gọi, build vẫn pass; tới khi có bài đầu tiên chèn ảnh MDX thì build
+  sẽ nổ. Đã kiểm chứng bằng thực nghiệm cả hai chiều.
+- Rủi ro thực tế của CVE này (vòng lặp vô hạn khi parse JXL/HEIF/ICNS) bằng 0
+  ở đây: plugin chỉ đọc ảnh WebP/PNG/JPEG **có sẵn trong repo** lúc build, không
+  nhận input từ người dùng.
+
+Nếu sau này muốn audit sạch hoàn toàn: hoặc gỡ `rehype-img-size` khỏi
+`source.config.ts` (hiện nó không làm gì), hoặc đợi upstream ra bản hỗ trợ
+`image-size` v2.
+
+`fumadocs-mdx` **pin ở `15.0.8`** (ngoại lệ có chủ đích so với việc nâng cấp
+dependency): `15.4.10` phá build Turbopack vì `dist/webpack/macro.js` chỉ bỏ qua
+file không phải macro khi `type === "webpack"`, nên với Turbopack luôn gọi
+`transformMacroModule` → `analyzeModule`, parse frontmatter MDX như JS:
+`content/c-programming-file-handling.mdx:1:3: Invalid operand for
+increment/decrement operator`. Các peer thiếu (`rolldown`, `satteri`) không phải
+nguyên nhân.
 
 ---
 

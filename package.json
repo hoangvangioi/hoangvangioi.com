@@ -51,5 +51,9 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "overrides": {
+    "compression": "^1.8.2",
+    "katex": "^0.18.10"
   }
 }
