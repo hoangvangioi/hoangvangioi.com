@@ -1,185 +1,195 @@
 # Hoàng Văn Giỏi — Personal Tech Blog
 
-Blog cá nhân về lập trình C/C++, Embedded Linux, firmware và vi điều khiển.
-Xây dựng bằng [Next.js](https://nextjs.org/) (App Router, **Static Export**) và
-[Fumadocs v16](https://fumadocs.dev).
+A personal blog about C/C++ programming, Embedded Linux, firmware and
+microcontrollers. Built with [Next.js](https://nextjs.org/) (App Router,
+**Static Export**) and [Fumadocs v16](https://fumadocs.dev).
 
-> **Ghi chú lịch sử repo:** mã nguồn Fumadocs v8 cũ và repo `search-api` riêng
-> đã được lưu vào các branch `old-v8` và `search-api`. Tìm kiếm giờ nằm ngay
-> trong repo này.
+> **Repository history:** the legacy Fumadocs v8 source and the separate
+> `search-api` repository are preserved in the `old-v8` and `search-api`
+> branches. Search now lives in this repository.
 
 ---
 
-## Bắt đầu
+## Getting started
 
-Yêu cầu **Node >= 22** (xem `engines` trong `package.json`).
+Requires **Node >= 22** (see `engines` in `package.json`).
 
 ```bash
 npm install
 npm run dev
 ```
 
-Mở http://localhost:3000 trên trình duyệt.
+Then open http://localhost:3000.
 
-> Build **không cần** mạng để tải font: Inter đã được self-host trong
-> `public/fonts/` (variable font, wght 100–900, có subset tiếng Việt, giấy phép
-> SIL OFL 1.1). Trước đây dùng `next/font/google` nên build sẽ fail cứng nếu
-> không truy cập được `fonts.googleapis.com`.
+> The build needs **no network access for fonts**: Inter is self-hosted in
+> `public/fonts/` (variable font, wght 100–900, Vietnamese subset, SIL OFL 1.1).
+> It used to come from `next/font/google`, which made the build fail hard
+> whenever `fonts.googleapis.com` was unreachable.
 
 ### Scripts
 
-| Lệnh                   | Mô tả                                                 |
-| :--------------------- | :---------------------------------------------------- |
-| `npm run dev`          | Chạy dev server                                       |
-| `npm run build`        | Build static export ra `out/`                         |
-| `npm start`            | Serve thử thư mục `out/`                              |
-| `npm run types:check`  | Sinh `.source/` + route types rồi chạy `tsc --noEmit` |
-| `npm run lint`         | ESLint (flat config, `eslint-config-next`)            |
-| `npm run format`       | Prettier ghi đè                                       |
-| `npm run format:check` | Prettier kiểm tra (CI dùng lệnh này)                  |
-| `npm run check`        | Chạy cả 4 bước trên + build — nên chạy trước khi push |
+| Command                | Description                                              |
+| :--------------------- | :------------------------------------------------------- |
+| `npm run dev`          | Start the dev server                                     |
+| `npm run build`        | Build the static export into `out/`                      |
+| `npm start`            | Serve `out/` locally                                     |
+| `npm run types:check`  | Generate `.source/` and route types, then `tsc --noEmit` |
+| `npm run lint`         | ESLint (flat config, `eslint-config-next`)               |
+| `npm run format`       | Prettier, write                                          |
+| `npm run format:check` | Prettier, check only (this is what CI runs)              |
+| `npm run check`        | All four above plus a build — run it before pushing      |
 
-CI: xem `.github/workflows/ci.yml` (typecheck → lint → prettier → build → kiểm
-tra `out/`).
+CI: `.github/workflows/ci.yml` (typecheck → lint → prettier → build → verify
+`out/`).
 
 ---
 
-## Biến môi trường
-
-Sao chép `.env.example` thành `.env.local`:
+## Environment variables
 
 ```bash
 cp .env.example .env.local
 ```
 
-| Biến                    | Bắt buộc | Mặc định                   | Dùng cho                                                              |
-| :---------------------- | :------- | :------------------------- | :-------------------------------------------------------------------- |
-| `SITE_URL`              | Không    | `https://hoangvangioi.com` | `sitemap.xml`, `robots.txt`, `feed.xml`, canonical, Open Graph        |
-| `NEXT_PUBLIC_AD_CLIENT` | Không    | _(rỗng = tắt ads)_         | Google AdSense publisher ID, **chỉ phần số** (code tự thêm `ca-pub-`) |
-| `NEXT_PUBLIC_AD_SLOT`   | Không    | _(rỗng = tắt ads)_         | AdSense slot ID                                                       |
+| Variable                | Required | Default                    | Used for                                                          |
+| :---------------------- | :------- | :------------------------- | :---------------------------------------------------------------- |
+| `SITE_URL`              | No       | `https://hoangvangioi.com` | `sitemap.xml`, `robots.txt`, `feed.xml`, canonical URLs, OG tags  |
+| `NEXT_PUBLIC_AD_CLIENT` | No       | _(empty = ads off)_        | AdSense publisher ID, **numeric part only** (code adds `ca-pub-`) |
+| `NEXT_PUBLIC_AD_SLOT`   | No       | _(empty = ads off)_        | AdSense slot ID                                                   |
 
-Mọi biến đều được đọc **lúc build** (repo dùng `output: 'export'`), nên phải
-set trước khi `npm run build` — kể cả trên CI. Thiếu cả `NEXT_PUBLIC_AD_CLIENT`
-lẫn `NEXT_PUBLIC_AD_SLOT` thì quảng cáo bị tắt hoàn toàn: không render `<ins>`,
-không tải `adsbygoogle.js`, và `ads.txt` trả về rỗng (thay vì sinh dòng sai
-định dạng `google.com, pub-, DIRECT, ...`).
+Every variable is read at **build time** (`output: 'export'`), so it has to be
+set before `npm run build` — CI included. When both AdSense variables are empty,
+ads are off completely: no `<ins>` is rendered, `adsbygoogle.js` is never
+loaded, and `ads.txt` returns an empty body instead of a malformed
+`google.com, pub-, DIRECT, ...` line.
 
 ---
 
-## Cấu trúc dự án
+## Project structure
 
-### Nội dung & cấu hình
+### Content and configuration
 
-- `content/*.mdx` — bài viết. Frontmatter: `title`, `description`, `tags`,
+- `content/*.mdx` — the posts. Frontmatter: `title`, `description`, `tags`,
   `image`, `authors`, `date`, `math`.
-- `source.config.ts` — schema frontmatter (Zod) + plugin remark/rehype.
-- `src/lib/source.ts` — adapter Fumadocs [`loader()`](https://fumadocs.dev/docs/headless/source-api),
-  kèm `sortedPages()` / `getTags()` đã cache ở module scope.
-- `src/lib/shared.ts` — hằng số site, `SITE_URL`, helper `siteUrl()`, social links, footer.
-- `src/lib/search-tokenizer.ts` — tokenizer tiếng Việt cho Orama (dùng chung
-  lúc build index và lúc query).
-- `src/lib/date.ts` — format ngày `vi-VN` cố định múi giờ `Asia/Ho_Chi_Minh`.
-- `src/lib/layout.shared.tsx` — options cho header.
+- `source.config.ts` — frontmatter schema (Zod) plus the remark/rehype plugins.
+- `src/lib/source.ts` — Fumadocs
+  [`loader()`](https://fumadocs.dev/docs/headless/source-api) adapter, with
+  `sortedPages()` / `getTags()` cached at module scope.
+- `src/lib/shared.ts` — site constants, `SITE_URL`, the `siteUrl()` /
+  `siteFileUrl()` helpers, social links, footer copy.
+- `src/lib/search-tokenizer.ts` — the Vietnamese tokenizer, shared by index
+  build time and query time.
+- `src/lib/date.ts` — `vi-VN` date formatting pinned to `Asia/Ho_Chi_Minh`.
+- `src/lib/layout.shared.tsx` — header options.
 
-### Bảng route
+### Routes
 
-| Route / File                                         | Loại          | Mô tả                                                      |
-| :--------------------------------------------------- | :------------ | :--------------------------------------------------------- |
-| `app/(home)/page.tsx`                                | Page          | Trang chủ: giới thiệu + lưới bài viết                      |
-| `app/posts/[slug]/page.tsx`                          | Dynamic Page  | Trang bài viết (Fumadocs `DocsPage`)                       |
-| `app/(home)/tags/[tag]/page.tsx`                     | Dynamic Page  | Danh sách bài theo thẻ                                     |
-| `app/api/search/route.ts`                            | Route Handler | Index tìm kiếm tĩnh (`/api/search`) cho client-side search |
-| `app/feed.xml/route.ts`                              | RSS Feed      | RSS 2.0, xếp mới → cũ                                      |
-| `app/sitemap.ts` · `app/robots.ts`                   | SEO           | Sitemap + robots (URL khớp `trailingSlash: true`)          |
-| `app/manifest.ts`                                    | PWA           | Web manifest (bộ icon đã thu gọn)                          |
-| `app/og/posts/[slug]/route.tsx`                      | Dynamic Image | Ảnh Open Graph 1200×630 cho từng bài                       |
-| `app/llms.txt` · `llms-full.txt` · `llms.mdx/[slug]` | AI Friendly   | Nội dung dạng text/markdown cho LLM & AI crawler           |
+| Route / file                                             | Kind          | Description                                                |
+| :------------------------------------------------------- | :------------ | :--------------------------------------------------------- |
+| `src/app/(home)/page.tsx`                                | Page          | Home: intro plus the post grid                             |
+| `src/app/posts/[slug]/page.tsx`                          | Dynamic page  | Post renderer (Fumadocs `DocsPage`)                        |
+| `src/app/(home)/tags/[tag]/page.tsx`                     | Dynamic page  | Posts filtered by tag                                      |
+| `src/app/api/search/route.ts`                            | Route handler | Static search index (`/api/search`) for client-side search |
+| `src/app/feed.xml/route.ts`                              | RSS feed      | RSS 2.0, newest first                                      |
+| `src/app/sitemap.ts` · `src/app/robots.ts`               | SEO           | Sitemap and robots (URLs match `trailingSlash: true`)      |
+| `src/app/manifest.ts`                                    | PWA           | Web manifest (trimmed icon set)                            |
+| `src/app/og/posts/[slug]/route.tsx`                      | Dynamic image | 1200×630 Open Graph image per post                         |
+| `src/app/llms.txt` · `llms-full.txt` · `llms.mdx/[slug]` | AI friendly   | Plain text / markdown for LLMs and AI crawlers             |
 
-### Viết bài mới
+### Writing a post
 
 ```mdx
 ---
-title: 'Tiêu đề bài viết'
-description: 'Mô tả ngắn cho SEO và RSS.'
+title: 'Post title'
+description: 'Short description used for SEO and RSS.'
 authors: [gioi]
 date: '2026-01-15T10:00:00.000Z'
 tags: ['C', 'Linux']
-image: '/posts/ten-bai-viet/cover.webp'
+image: '/posts/post-slug/cover.webp'
 math: false
 ---
 ```
 
-- Đặt ảnh cover ở `public/posts/<ten-bai-viet>/cover.webp` (nên là WebP, ~1200×630).
-- `math: true` chỉ khi bài có công thức LaTeX — CSS KaTeX (~19 KB) chỉ được tải
-  cho những bài bật cờ này.
-- `authors` là key trong `authors` của `src/lib/shared.ts` (mặc định `gioi`).
-- Component MDX có sẵn: `<Info>`, `<Tip>`, `<Warning>`, `<Error>`, `<Accordion>`,
-  `<Tabs>`, `<Steps>`, `<Files>`, `<TypeTable>`, `<LinkButton>`, `<Adsense>`
-  (xem `src/components/mdx.tsx`).
+- Put the cover image in `public/posts/<post-slug>/cover.webp` (WebP, about
+  1200×630).
+- Set `math: true` only for posts that contain LaTeX: the KaTeX stylesheet
+  (22,660 B, 3,487 B gzipped) is linked on those pages alone.
+- `authors` are keys of the `authors` map in `src/lib/shared.ts` (default
+  `gioi`).
+- Available MDX components: `<Info>`, `<Tip>`, `<Warning>`, `<Error>`,
+  `<Accordion>`, `<Tabs>`, `<Steps>`, `<Files>`, `<TypeTable>`, `<LinkButton>`,
+  `<Adsense>` (see `src/components/mdx.tsx`).
 
 ---
 
-## Ghi chú tối ưu
+## Optimization notes
 
-- **Tìm kiếm tiếng Việt:** engine của fumadocs (nay là `zbsearch`, trước là
-  Orama) không có ngôn ngữ `vietnamese`, còn splitter `english`/`multilingual`
-  coi mọi chữ cái Việt là ký tự phân cách (`'Hướng dẫn'` → `['h','ng','d','n']`)
-  và không lược dấu (`'huong dan'` → 0 hoặc sai kết quả).
-  `src/lib/search-tokenizer.ts` tách từ theo Unicode rồi lược dấu (NFD + `đ/Đ`,
-  vì NFD không phân rã U+0111), nên gõ `huong dan` hay `hướng dẫn` đều ra kết
-  quả. Tokenizer này **phải** dùng giống nhau ở server
-  (`app/api/search/route.ts`) và client (`components/search.tsx`).
-  Không truyền `language` kèm custom tokenizer — engine sẽ ném
-  `NO_LANGUAGE_WITH_CUSTOM_TOKENIZER`.
-- **KaTeX:** CSS + font phục vụ từ `public/vendor/katex/` và chỉ được `<link>`
-  khi frontmatter có `math: true`. Không `import 'katex/dist/katex.css'` vì
-  Turbopack gom CSS theo module graph của trang: cả component render có điều
-  kiện lẫn dynamic import đều vẫn đính 28 KB CSS vào **cả 19** trang bài viết
-  (đã đo, cả hai cách đều thất bại). Chỉ vendor 20 file `.woff2` (296 KB) thay
-  vì cả woff2/woff/ttf (~1,17 MB). Xem `public/vendor/katex/README.md`.
-- **Ảnh OG** sinh ra ở `/og/posts/<slug>` là file không có đuôi trong `out/`,
-  nên `public/_headers` khai báo `Content-Type: image/png` cho `/og/*`.
-- **Font** dùng variable weight nên `font-bold` / `font-extrabold` / `font-black`
-  là độ đậm thật, không bị trình duyệt vẽ giả đậm.
+- **Vietnamese search.** The engine fumadocs uses (`zbsearch`, previously Orama)
+  has no `vietnamese` language, and its `english` / `multilingual` splitters
+  treat every Vietnamese letter as a separator (`'Hướng dẫn'` →
+  `['h', 'ng', 'd', 'n']`) without folding diacritics (`'huong dan'` → zero or
+  wrong hits). `src/lib/search-tokenizer.ts` splits on Unicode boundaries first
+  and folds diacritics afterwards (NFD plus a manual `đ`/`Đ`, because NFD does
+  not decompose U+0111), so both `huong dan` and `hướng dẫn` match. The very
+  same tokenizer **must** run on the server (`src/app/api/search/route.ts`) and
+  on the client (`src/components/search.tsx`). Never pass `language` alongside a
+  custom tokenizer — the engine throws `NO_LANGUAGE_WITH_CUSTOM_TOKENIZER`.
+- **KaTeX.** The stylesheet and fonts are served from `public/vendor/katex/` and
+  `<link>`ed only when the frontmatter sets `math: true`. Do not
+  `import 'katex/dist/katex.css'`: Turbopack collects CSS through the page
+  module graph, so both a conditionally rendered component and a dynamic import
+  still attached the 33 KB stylesheet to **all 19** post pages (measured, both
+  approaches fail). Only the 20 `.woff2` files are vendored (263,888 B) instead
+  of the full woff2/woff/ttf set (1,080,668 B), and the `,url(...woff)` /
+  `,url(...ttf)` fallbacks were stripped from the CSS, leaving 20 `url()`
+  references. No post sets `math: true` today, so 0 of 19 pages ship the
+  stylesheet. See `public/vendor/katex/README.md`.
+- **Open Graph images.** `/og/posts/<slug>` writes extension-less files into
+  `out/`, so `public/_headers` sets `Content-Type: image/png` for `/og/*`.
+  `_headers` is a Netlify feature: a local `serve out` answers
+  `application/octet-stream`, which is expected.
+- **Fonts.** Inter is a variable-weight font, so `font-bold` / `font-extrabold`
+  / `font-black` render real weights instead of browser-synthesized faux bold.
 
-## Dependency & bảo mật
+## Dependencies and security
 
-`package.json` có `overrides` cho hai gói **build-time/dev-only**:
+`package.json` carries `overrides` for two **build-time / dev-only** packages:
 
-| Override              | Lý do                                                                                                                                                                                                                 |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `compression: ^1.8.2` | `serve@14.2.6` pin cứng `1.8.1` (DoS, GHSA-vc2v-76pw-4v95). Chỉ ảnh hưởng `npm start`/CI, không ship xuống trình duyệt.                                                                                               |
-| `katex: ^0.18.10`     | `rehype-katex`/`micromark-extension-math` kéo 2 bản lồng `0.16.47` (prototype pollution, GHSA-238p-pmpm-9mq7). Ép lên `0.18.10` vừa vá lỗi vừa **khớp phiên bản** với CSS/font vendored trong `public/vendor/katex/`. |
+| Override              | Reason                                                                                                                                                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `compression: ^1.8.2` | `serve@14.2.6` hard-pins `1.8.1` (DoS, GHSA-vc2v-76pw-4v95). Affects `npm start` and CI only, never shipped to a browser.                                                                                                |
+| `katex: ^0.18.10`     | `rehype-katex` / `micromark-extension-math` pull two nested copies of `0.16.47` (prototype pollution, GHSA-238p-pmpm-9mq7). Forcing `0.18.10` patches it and **matches the version** vendored in `public/vendor/katex/`. |
 
-**Cố ý KHÔNG override `image-size` lên 2.x** (dù `npm audit` báo 1 high):
+**`image-size` is deliberately NOT overridden to 2.x**, even though `npm audit`
+reports one high:
 
-- `image-size` v2 bỏ nhận đường dẫn file — `imageSize('/path/to.png')` ném
-  `TypeError`, việc đọc file chuyển sang `image-size/fromFile` (async).
-- `rehype-img-size@1.0.1` gọi `sizeOf(src)` với `src` là **đường dẫn**, và chỉ
-  có 2 version (1.0.0/1.0.1) — không có bản nào hỗ trợ v2.
-- Override sang v2 làm `npm audit` xanh nhưng **gài bẫy**: hiện 0/19 bài có ảnh
-  trong nội dung MDX (ảnh cover render qua `next/image`) nên `sizeOf` không bao
-  giờ được gọi, build vẫn pass; tới khi có bài đầu tiên chèn ảnh MDX thì build
-  sẽ nổ. Đã kiểm chứng bằng thực nghiệm cả hai chiều.
-- Rủi ro thực tế của CVE này (vòng lặp vô hạn khi parse JXL/HEIF/ICNS) bằng 0
-  ở đây: plugin chỉ đọc ảnh WebP/PNG/JPEG **có sẵn trong repo** lúc build, không
-  nhận input từ người dùng.
+- v2 dropped path support: `imageSize('/path/to.png')` throws a `TypeError`, and
+  reading a file moved to `image-size/fromFile` (async).
+- `rehype-img-size@1.0.1` calls `sizeOf(src)` where `src` is a **path**, and that
+  package only ever published 1.0.0 / 1.0.1 — no version supports v2.
+- Overriding to v2 turns `npm audit` green but plants a trap: 0 of the 19 posts
+  currently embed an inline MDX image (covers render through `next/image`), so
+  `sizeOf` is never called and the build passes. The first post that embeds an
+  MDX image would break it. Verified experimentally in both directions.
+- The real exposure of that CVE (an infinite loop while parsing JXL/HEIF/ICNS) is
+  zero here: the plugin only reads WebP/PNG/JPEG images **already committed to
+  the repo**, at build time, with no user input.
 
-Nếu sau này muốn audit sạch hoàn toàn: hoặc gỡ `rehype-img-size` khỏi
-`source.config.ts` (hiện nó không làm gì), hoặc đợi upstream ra bản hỗ trợ
-`image-size` v2.
+For a fully clean audit later: either drop `rehype-img-size` from
+`source.config.ts` (it currently does nothing) or wait for an upstream release
+that supports `image-size` v2.
 
-`fumadocs-mdx` **pin ở `15.0.8`** (ngoại lệ có chủ đích so với việc nâng cấp
-dependency): `15.4.10` phá build Turbopack vì `dist/webpack/macro.js` chỉ bỏ qua
-file không phải macro khi `type === "webpack"`, nên với Turbopack luôn gọi
-`transformMacroModule` → `analyzeModule`, parse frontmatter MDX như JS:
+`fumadocs-mdx` is **pinned to `15.0.8`** — a deliberate exception to the
+dependency upgrades. `15.4.10` breaks the Turbopack build because
+`dist/webpack/macro.js` only skips non-macro files when `type === "webpack"`, so
+under Turbopack it always calls `transformMacroModule` → `analyzeModule` and
+parses MDX frontmatter as JavaScript:
 `content/c-programming-file-handling.mdx:1:3: Invalid operand for
-increment/decrement operator`. Các peer thiếu (`rolldown`, `satteri`) không phải
-nguyên nhân.
+increment/decrement operator`. The missing peers (`rolldown`, `satteri`) are not
+the cause.
 
 ---
 
-## Tìm hiểu thêm
+## Learn more
 
 - [Fumadocs Documentation](https://fumadocs.dev)
 - [Next.js Documentation](https://nextjs.org/docs)
