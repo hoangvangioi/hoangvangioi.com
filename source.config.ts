@@ -21,6 +21,9 @@ export const posts = defineCollections({
     tags: z.array(z.string()).default([]),
     image: z.string().optional(),
     authors: z.array(z.string()).default([]),
+    // Set on posts that contain LaTeX ($...$ / $$...$$). Gates the KaTeX
+    // stylesheet, which is otherwise dead weight on every post.
+    math: z.boolean().default(false),
     date: z
       .string()
       .optional()

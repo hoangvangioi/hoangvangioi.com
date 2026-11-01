@@ -14,7 +14,6 @@ import { getTagHref, source } from '@/lib/source';
 import { gitConfig, authors, SITE_URL } from '@/lib/shared';
 import { getMDXComponents } from '@/components/mdx';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
-import 'katex/dist/katex.css';
 
 export default async function Page(props: PageProps<'/posts/[slug]'>) {
   const params = await props.params;
@@ -32,6 +31,19 @@ export default async function Page(props: PageProps<'/posts/[slug]'>) {
       tableOfContent={{ style: 'clerk' }}
       className="max-w-[950px]"
     >
+      {/*
+        A <link> is the only way to gate this per page: Turbopack attaches CSS by
+        module graph, so both a conditional component and a dynamic import still
+        shipped the chunk to all 19 posts (measured).
+      */}
+      {page.data.math && (
+        // eslint-disable-next-line @next/next/no-css-tags
+        <link
+          rel="stylesheet"
+          href="/vendor/katex/katex.min.css"
+          precedence="default"
+        />
+      )}
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">
         {page.data.description}

@@ -30,3 +30,8 @@
 
 /api/search
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+ 
+# No content hash in these paths, so cache for a week rather than immutable —
+# otherwise a katex bump would keep serving stale fonts.
+/vendor/katex/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=604800
