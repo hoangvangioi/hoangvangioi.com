@@ -2,11 +2,11 @@ import { LinkButton } from '@/components/LinkButton';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getTagHref, getTags } from '@/lib/source';
-import { SITE_URL, type TagInfo } from '@/lib/shared';
+import { siteUrl, type TagInfo } from '@/lib/shared';
 
 export const metadata: Metadata = {
   alternates: {
-    canonical: `${SITE_URL}/tags`,
+    canonical: siteUrl('/tags'),
   },
 };
 

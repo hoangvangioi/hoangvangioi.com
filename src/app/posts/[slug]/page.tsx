@@ -11,7 +11,8 @@ import {
   EditOnGitHub,
 } from 'fumadocs-ui/layouts/docs/page';
 import { getTagHref, source } from '@/lib/source';
-import { gitConfig, authors, SITE_URL } from '@/lib/shared';
+import { formatLongDate, toDateOnly } from '@/lib/date';
+import { gitConfig, authors, siteUrl } from '@/lib/shared';
 import { getMDXComponents } from '@/components/mdx';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 
@@ -51,7 +52,7 @@ export default async function Page(props: PageProps<'/posts/[slug]'>) {
 
       <div className="flex flex-col gap-6 pb-8 border-b border-border">
         <div className="flex items-center gap-3">
-          {page.data.authors.map((authorKey, i) => {
+          {page.data.authors.map((authorKey) => {
             const author = authors[authorKey] || authors['gioi'];
             return (
               <a
@@ -78,12 +79,8 @@ export default async function Page(props: PageProps<'/posts/[slug]'>) {
           })}
 
           <span className="text-muted-foreground">•</span>
-          <time className="text-muted-foreground">
-            {date.toLocaleDateString('vi-VN', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
+          <time dateTime={toDateOnly(date)} className="text-muted-foreground">
+            {formatLongDate(date)}
           </time>
         </div>
 
@@ -127,7 +124,7 @@ export default async function Page(props: PageProps<'/posts/[slug]'>) {
       <div className="flex flex-row flex-wrap items-center justify-between gap-4 empty:hidden">
         <PageLastUpdate date={date} />
         <EditOnGitHub
-          href={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/docs/${page.path}`}
+          href={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/content/${page.path}`}
         />
       </div>
     </DocsPage>
@@ -154,7 +151,7 @@ export async function generateMetadata(
     title: page.data.title,
     description: page.data.description,
     alternates: {
-      canonical: `${SITE_URL}/posts/${params.slug}`,
+      canonical: siteUrl(`/posts/${params.slug}`),
     },
     openGraph: {
       type: 'article',

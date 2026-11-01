@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { BlogItem } from '@/components/BlogItem';
 import { LinkButton } from '@/components/LinkButton';
-import { getTags, source } from '@/lib/source';
-import { SITE_URL } from '@/lib/shared';
+import { getTags, slugifyTag, sortedPages } from '@/lib/source';
+import { siteUrl } from '@/lib/shared';
 
 export default async function TagPage(props: {
   params: Promise<{ tag: string }>;
@@ -10,13 +10,9 @@ export default async function TagPage(props: {
   const params = await props.params;
   const decodedTag = decodeURIComponent(params.tag);
 
-  const pages = source
-    .getPages()
-    .filter((blog) =>
-      blog.data.tags?.some(
-        (tag) => tag.toLowerCase().replace(/\s+/g, '-') === decodedTag,
-      ),
-    );
+  const pages = sortedPages().filter((blog) =>
+    blog.data.tags?.some((tag) => slugifyTag(tag) === decodedTag),
+  );
 
   return (
     <div className="flex w-full flex-1 flex-col gap-5">
@@ -46,10 +42,7 @@ export default async function TagPage(props: {
 }
 
 export async function generateStaticParams() {
-  const tags = [...getTags().keys()];
-  return tags.map((key) => ({
-    tag: key.toLowerCase().replace(/\s+/g, '-'),
-  }));
+  return [...getTags().keys()].map((tag) => ({ tag: slugifyTag(tag) }));
 }
 
 export async function generateMetadata(props: {
@@ -61,7 +54,7 @@ export async function generateMetadata(props: {
   return {
     title: `Bài viết được gắn thẻ ${decodedTag}`,
     alternates: {
-      canonical: `${SITE_URL}/tags/${params.tag}`,
+      canonical: siteUrl(`/tags/${params.tag}`),
     },
     openGraph: {
       images: '/cover.webp',
