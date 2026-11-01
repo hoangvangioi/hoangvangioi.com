@@ -178,6 +178,24 @@ For a fully clean audit later: either drop `rehype-img-size` from
 `source.config.ts` (it currently does nothing) or wait for an upstream release
 that supports `image-size` v2.
 
+**The 18 moderate `minimatch` advisories are expected and left alone on
+purpose.** They all trace back to one root — `minimatch <11.0.1` (denial of
+service via globparts amplification, CVE-2026-118764) — reached through the
+ESLint dependency tree (`@eslint/config-array`, `@eslint/eslintrc`,
+`@typescript-eslint/typescript-estree`, `eslint-plugin-import`,
+`eslint-plugin-jsx-a11y`, `eslint-plugin-react`) plus `serve-handler`. All of it
+is dev-only and none of it ships to a browser.
+
+Do **not** run `npm audit fix --force` here: the "fix" npm proposes is
+downgrading `eslint` to 4.0.0, `eslint-config-next` to 12.0.4 or `serve` to
+6.5.8. Overriding `minimatch` to 11.x is not an option either — ESLint 9 calls
+`minimatch()` as a function and v11 changed the export shape, which breaks
+linting. Revisit once ESLint's own tree moves to a patched minimatch.
+
+For reference, `npm audit` went from 9 advisories before this work (3 high:
+`compression` twice and `image-size`, plus 2 moderate and 4 low) to 19 (1 high —
+`image-size`, deliberate; 18 moderate — `minimatch`, dev-only; 0 low).
+
 `fumadocs-mdx` is **pinned to `15.0.8`** — a deliberate exception to the
 dependency upgrades. `15.4.10` breaks the Turbopack build because
 `dist/webpack/macro.js` only skips non-macro files when `type === "webpack"`, so
