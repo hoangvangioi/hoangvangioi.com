@@ -12,6 +12,16 @@ export const source = loader({
 
 export type Post = ReturnType<typeof source.getPage>;
 
+/** Pages sorted newest first, memoized: the MDX collection is fixed at build time. */
+let sortedCache: ReturnType<typeof source.getPages> | undefined;
+
+export function sortedPages(): NonNullable<typeof sortedCache> {
+  sortedCache ??= [...source.getPages()].sort(
+    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+  );
+  return sortedCache;
+}
+
 export function getPageImage(page: (typeof source)['$inferPage']) {
   const segments = [...page.slugs, 'image.png'];
 
@@ -38,20 +48,30 @@ export async function getLLMText(page: (typeof source)['$inferPage']) {
 ${processed}`;
 }
 
-export function getTagHref(tag: string) {
-  return `/tags/${tag.toLowerCase()}`.replace(/\s+/g, '-');
+/** One slug rule, shared by tag links and generateStaticParams. */
+export function slugifyTag(tag: string) {
+  return tag.toLowerCase().replace(/\s+/g, '-');
 }
 
-export function getTags() {
+export function getTagHref(tag: string) {
+  return `/tags/${slugifyTag(tag)}`;
+}
+
+let tagsCache: Map<string, TagInfo> | undefined;
+
+/** Post count per tag, memoized: /tags, its generateStaticParams and the sitemap all need it. */
+export function getTags(): Map<string, TagInfo> {
+  if (tagsCache) return tagsCache;
+
   const map = new Map<string, TagInfo>();
   for (const page of source.getPages()) {
     for (const tag of page.data.tags) {
-      if (map.has(tag)) {
-        map.get(tag)!.count++;
-      } else {
-        map.set(tag, { count: 1 });
-      }
+      const info = map.get(tag);
+      if (info) info.count++;
+      else map.set(tag, { count: 1 });
     }
   }
+
+  tagsCache = map;
   return map;
 }
