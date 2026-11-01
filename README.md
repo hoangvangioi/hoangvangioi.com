@@ -115,6 +115,11 @@ math: false
   (22,660 B, 3,487 B gzipped) is linked on those pages alone.
 - `authors` are keys of the `authors` map in `src/lib/shared.ts` (default
   `gioi`).
+- Always set `date`. The schema allows omitting it, but the fallback is
+  `new Date()` at build time, so a post without a date becomes the "newest" one
+  on every rebuild: it jumps to the top of the home page, of `feed.xml` and of
+  `sitemap.xml`, its `<pubDate>` / `lastModified` keep changing, and it drags
+  the site-wide `lastModified` (taken from the newest post) along with it.
 - Available MDX components: `<Info>`, `<Tip>`, `<Warning>`, `<Error>`,
   `<Accordion>`, `<Tabs>`, `<Steps>`, `<Files>`, `<TypeTable>`, `<LinkButton>`,
   `<Adsense>` (see `src/components/mdx.tsx`).
