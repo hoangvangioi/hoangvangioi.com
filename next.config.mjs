@@ -19,7 +19,9 @@ const config = {
       'fumadocs-ui',
       'fumadocs-core',
       '@icons-pack/react-simple-icons',
-      '@orama/orama',
+
+      // Fumadocs v16.10+ uses ZBSearch instead of Orama for client-side search.
+      'zbsearch',
     ],
   },
 };
