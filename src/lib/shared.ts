@@ -36,7 +36,15 @@ export function siteUrl(path = '/'): string {
   return `${SITE_URL}${trimmed}/`;
 }
 
-// export const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';
+/**
+ * Absolute URL for a route that serves an extension-less file
+ * (/og/posts/<slug>, /llms.mdx/posts/<slug>). siteUrl() would append a
+ * trailing slash, and that path 404s.
+ */
+export function siteFileUrl(path: string): string {
+  const withLeadingSlash = path.startsWith('/') ? path : `/${path}`;
+  return `${SITE_URL}${withLeadingSlash.replace(/\/+$/, '')}`;
+}
 
 export const site = {
   site_name: 'Hoàng Văn Giỏi',

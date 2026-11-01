@@ -22,12 +22,11 @@ export function sortedPages(): NonNullable<typeof sortedCache> {
   return sortedCache;
 }
 
+/** OG image rendered by src/app/og/posts/[slug]/route.tsx. */
 export function getPageImage(page: (typeof source)['$inferPage']) {
-  const segments = [...page.slugs, 'image.png'];
-
   return {
-    segments,
-    url: `${docsImageRoute}/${segments.join('/')}`,
+    segments: page.slugs,
+    url: `${docsImageRoute}/${page.slugs.join('/')}`,
   };
 }
 

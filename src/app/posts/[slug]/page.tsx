@@ -10,9 +10,9 @@ import {
   PageLastUpdate,
   EditOnGitHub,
 } from 'fumadocs-ui/layouts/docs/page';
-import { getTagHref, source } from '@/lib/source';
+import { getPageImage, getTagHref, source } from '@/lib/source';
 import { formatLongDate, toDateOnly } from '@/lib/date';
-import { gitConfig, authors, siteUrl } from '@/lib/shared';
+import { gitConfig, authors, siteUrl, siteFileUrl } from '@/lib/shared';
 import { getMDXComponents } from '@/components/mdx';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
 
@@ -147,6 +147,10 @@ export async function generateMetadata(
   const page = source.getPage([params.slug]);
   if (!page) notFound();
 
+  const date =
+    page.data.date instanceof Date ? page.data.date : new Date(page.data.date);
+  const og = getPageImage(page);
+
   return {
     title: page.data.title,
     description: page.data.description,
@@ -156,10 +160,27 @@ export async function generateMetadata(
     openGraph: {
       type: 'article',
       tags: page.data.tags,
-      authors: page.data.authors.map((author) => authors[author].name),
+      publishedTime: date.toISOString(),
+      // Unknown author keys would crash the build; the body already falls back.
+      authors: page.data.authors.map(
+        (author) => (authors[author] ?? authors.gioi).name,
+      ),
       title: page.data.title,
       description: page.data.description,
-      images: page.data.image ? [{ url: page.data.image }] : '/cover.webp',
+      images: [
+        {
+          url: siteFileUrl(og.url),
+          width: 1200,
+          height: 630,
+          alt: page.data.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: page.data.title,
+      description: page.data.description,
+      images: [siteFileUrl(og.url)],
     },
   };
 }
