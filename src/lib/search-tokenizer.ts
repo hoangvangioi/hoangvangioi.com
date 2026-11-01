@@ -1,50 +1,26 @@
 import type { Tokenizer } from 'zbsearch';
 
 /**
- * Tokenizer tiếng Việt cho ZBSearch (engine tìm kiếm của Fumadocs từ v16.10+,
- * thay cho Orama).
+ * Vietnamese tokenizer for ZBSearch (Fumadocs' search engine since v16.10).
  *
- * ── Vấn đề với engine cũ (Orama, `language: 'english'`) ──
- * Orama không có ngôn ngữ `vietnamese`, và splitter của english là
- * `/[^A-Za-zàèéìòóù0-9_'-]+/` — mọi chữ cái Việt (ư ơ ẫ ế ộ …) bị coi là
- * KÝ TỰ PHÂN CÁCH nên từ bị băm vụn:
+ * The built-in tokenizers do not fold diacritics, so searching without tones —
+ * a very common Vietnamese typing style — fails: "huong dan" matched the wrong
+ * post, "ky thuat" and "bo nho" matched nothing. Splitting on non-ASCII letters
+ * (the old Orama `english` behaviour) was worse still: "Hướng dẫn debug"
+ * became ["h","ng","d","n","debug"].
  *
- *   'Hướng dẫn debug'   -> ['h','ng','d','n','debug']
- *   'Kỹ thuật tìm kiếm' -> ['k','thu','t','tim','ki','m']
- *
- * ── Tokenizer `multilingual` mặc định của ZBSearch ──
- * Đã tốt hơn hẳn (giữ từ nguyên vẹn):
- *
- *   'Hướng dẫn debug'   -> ['hướng','dẫn','debug']
- *
- * nhưng vẫn KHÔNG lược dấu, nên gõ không dấu — kiểu gõ rất phổ biến của người
- * Việt — vẫn fail (đã đo thực tế):
- *
- *   'ky thuat' -> 0 kết quả      'bo nho' -> 0 kết quả
- *   'huong dan' -> ra SAI bài (khớp 'dangling' của bài khác)
- *
- * ── Tokenizer này ──
- * Tách từ theo Unicode (\p{L}\p{N}) rồi mới lược dấu, để 'Hướng dẫn' và
- * 'huong dan' cùng chuẩn hoá về ['huong','dan']. Đo lại thì cả hai kiểu gõ
- * đều trúng đúng bài.
- *
- * File này PHẢI dùng chung cho cả 2 phía (index lúc build + query lúc chạy),
- * nếu không token 2 bên lệch nhau và không match:
- *   - server: src/app/api/search/route.ts
- *   - client: src/components/search.tsx
- * Vì vậy KHÔNG được import gì server-only ở đây.
- *
- * Lưu ý: `load()` của ZBSearch chỉ ghi đè `tokenizer.language`, không thay
- * tokenizer, nên instance phía client vẫn giữ đúng hàm `tokenize` này.
+ * Split on Unicode word boundaries first, then fold tones, so "Hướng dẫn" and
+ * "huong dan" normalize to the same tokens. This module must stay isomorphic:
+ * the server route builds the index with it and the client queries with it,
+ * and any mismatch between the two means no results.
  */
 
-/** Tách từ: giữ lại chữ cái (mọi ngôn ngữ), chữ số, `_`, `'` và `-`. */
+/** Keeps letters of any script, digits, `_`, `'` and `-`. */
 const SPLIT_RULE = /[^\p{L}\p{N}_'-]+/u;
 
 /**
- * Lược dấu tiếng Việt: 'Hướng' -> 'huong', 'đường' -> 'duong'.
- *
- * Lưu ý `đ`/`Đ` (U+0111/U+0110) KHÔNG bị phân rã bởi NFD nên phải thay thủ công.
+ * Folds Vietnamese tones: 'Hướng' -> 'huong'.
+ * `đ`/`Đ` (U+0111/U+0110) are not decomposed by NFD, so replace them by hand.
  */
 export function stripTones(input: string): string {
   return input
@@ -54,7 +30,7 @@ export function stripTones(input: string): string {
     .replace(/Đ/g, 'D');
 }
 
-/** Chuẩn hoá 1 chuỗi thành danh sách token (đã lowercase + lược dấu + khử trùng). */
+/** Lowercases, splits, folds tones and de-duplicates. */
 export function tokenize(input: string): string[] {
   const tokens = input
     .toLowerCase()
@@ -62,23 +38,18 @@ export function tokenize(input: string): string[] {
     .map(stripTones)
     .filter(Boolean);
 
-  // `allowDuplicates: false` là hành vi mặc định của engine — giữ nguyên để
-  // tần suất token trong index không bị thổi phồng.
   return Array.from(new Set(tokens));
 }
 
-/**
- * Nhãn ngôn ngữ chỉ mang tính thủ tục (được `save()`/`load()` ghi nhận);
- * việc tách từ thực tế do hàm `tokenize` bên dưới tự xử lý nên nhãn này không
- * ảnh hưởng kết quả. Để 'english' vì đó là nhãn hợp lệ sẵn có.
- */
+// Only bookkeeping for save()/load(); the actual splitting is done by
+// `tokenize` below, so this label does not affect results.
 const TOKENIZER_LANGUAGE = 'english';
 
 export const vietnameseTokenizer: Tokenizer = {
   language: TOKENIZER_LANGUAGE,
   normalizationCache: new Map(),
+  // The engine passes non-string values for array fields (e.g. `breadcrumbs`);
+  // keep the default tokenizer's behaviour for those.
   tokenize: (raw) =>
-    // Engine gọi với giá trị không phải string cho field dạng mảng
-    // (vd `breadcrumbs: string[]`) — giữ đúng hành vi của tokenizer mặc định.
     typeof raw === 'string' ? tokenize(raw) : [raw as unknown as string],
 };
