@@ -83,17 +83,17 @@ loaded, and `ads.txt` returns an empty body instead of a malformed
 
 ### Routes
 
-| Route / file                                             | Kind          | Description                                                |
-| :------------------------------------------------------- | :------------ | :--------------------------------------------------------- |
-| `src/app/(home)/page.tsx`                                | Page          | Home: intro plus the post grid                             |
-| `src/app/posts/[slug]/page.tsx`                          | Dynamic page  | Post renderer (Fumadocs `DocsPage`)                        |
-| `src/app/(home)/tags/[tag]/page.tsx`                     | Dynamic page  | Posts filtered by tag                                      |
-| `src/app/api/search/route.ts`                            | Route handler | Static search index (`/api/search`) for client-side search |
-| `src/app/feed.xml/route.ts`                              | RSS feed      | RSS 2.0, newest first                                      |
-| `src/app/sitemap.ts` · `src/app/robots.ts`               | SEO           | Sitemap and robots (URLs match `trailingSlash: true`)      |
-| `src/app/manifest.ts`                                    | PWA           | Web manifest (trimmed icon set)                            |
-| `src/app/og/posts/[slug]/route.tsx`                      | Dynamic image | 1200×630 Open Graph image per post                         |
-| `src/app/llms.txt` · `llms-full.txt` · `llms.mdx/[slug]` | AI friendly   | Plain text / markdown for LLMs and AI crawlers             |
+| Route / file                                                   | Kind          | Description                                                |
+| :------------------------------------------------------------- | :------------ | :--------------------------------------------------------- |
+| `src/app/(home)/page.tsx`                                      | Page          | Home: intro plus the post grid                             |
+| `src/app/posts/[slug]/page.tsx`                                | Dynamic page  | Post renderer (Fumadocs `DocsPage`)                        |
+| `src/app/(home)/tags/[tag]/page.tsx`                           | Dynamic page  | Posts filtered by tag                                      |
+| `src/app/api/search/route.ts`                                  | Route handler | Static search index (`/api/search`) for client-side search |
+| `src/app/feed.xml/route.ts`                                    | RSS feed      | RSS 2.0, newest first                                      |
+| `src/app/sitemap.ts` · `src/app/robots.ts`                     | SEO           | Sitemap and robots (URLs match `trailingSlash: true`)      |
+| `src/app/manifest.ts`                                          | PWA           | Web manifest (trimmed icon set)                            |
+| `src/app/og/posts/[slug]/route.tsx`                            | Dynamic image | 1200×630 Open Graph image per post                         |
+| `src/app/llms.txt` · `llms-full.txt` · `llms.mdx/posts/[slug]` | AI friendly   | Plain text / markdown for LLMs and AI crawlers             |
 
 ### Writing a post
 
@@ -197,10 +197,11 @@ For reference, `npm audit` went from 9 advisories before this work (3 high:
 `image-size`, deliberate; 18 moderate — `minimatch`, dev-only; 0 low).
 
 `fumadocs-mdx` is **pinned to `15.0.8`** — a deliberate exception to the
-dependency upgrades. `15.4.10` breaks the Turbopack build because
-`dist/webpack/macro.js` only skips non-macro files when `type === "webpack"`, so
-under Turbopack it always calls `transformMacroModule` → `analyzeModule` and
-parses MDX frontmatter as JavaScript:
+dependency upgrades. `15.4.10` breaks the Turbopack build: its
+`dist/webpack/macro.js` (line 16 of the published tarball) only skips non-macro
+files when the bundler type is `"webpack"`, so under Turbopack the loader always
+calls `transformMacroModule` → `analyzeModule` and parses MDX frontmatter as
+JavaScript:
 `content/c-programming-file-handling.mdx:1:3: Invalid operand for
 increment/decrement operator`. The missing peers (`rolldown`, `satteri`) are not
 the cause.
