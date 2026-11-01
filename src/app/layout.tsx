@@ -1,4 +1,3 @@
-import { Inter } from 'next/font/google';
 import { Provider } from '@/components/provider';
 import type { Metadata, Viewport } from 'next';
 import Footer from '@/components/Footer';
@@ -6,12 +5,6 @@ import './global.css';
 import { footer, SITE_URL } from '@/lib/shared';
 import { Header } from '@/components/header';
 import { baseOptions } from '@/lib/layout.shared';
-
-const inter = Inter({
-  weight: '400',
-  display: 'swap',
-  subsets: ['latin', 'vietnamese'],
-});
 
 export const metadata: Metadata = {
   title: {
@@ -73,8 +66,14 @@ export const viewport: Viewport = {
 
 export default function Layout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="vi" className={inter.className} suppressHydrationWarning>
-      <body className="flex flex-col min-h-screen [--fd-layout-width:1400px]">
+    <html lang="vi" suppressHydrationWarning>
+      {/*
+        No manual font preload: React 19 Float duplicates every
+        <link rel="preload"> in the output (measured 4 links for 2 files).
+        Next already preloads the CSS chunk declaring @font-face, and
+        font-display: swap keeps text visible meanwhile.
+      */}
+      <body className="flex min-h-screen flex-col font-sans [--fd-layout-width:1400px]">
         <Provider>
           <Header {...baseOptions()} />
           {children}
