@@ -9,7 +9,34 @@ export const docsRoute = '/posts';
 export const docsImageRoute = '/og/posts';
 export const docsContentRoute = '/llms.mdx/posts';
 
-export const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';
+// Never fall back to localhost: an unset SITE_URL would leak into sitemap.xml,
+// robots.txt, the feed and every canonical tag.
+const DEFAULT_SITE_URL = 'https://hoangvangioi.com';
+
+/** No trailing slash, so `${SITE_URL}/path` never produces `//`. */
+export const SITE_URL = (process.env.SITE_URL ?? DEFAULT_SITE_URL).replace(
+  /\/+$/,
+  '',
+);
+
+/**
+ * Absolute URL for a page route. trailingSlash: true means the URLs the site
+ * actually serves end in "/", so hand-written `${SITE_URL}/about` never matched
+ * them. Paths ending in a file name (sitemap.xml, feed.xml) get no slash.
+ */
+export function siteUrl(path = '/'): string {
+  const withLeadingSlash = path.startsWith('/') ? path : `/${path}`;
+  const trimmed = withLeadingSlash.replace(/\/+$/, '');
+
+  if (trimmed === '') return `${SITE_URL}/`;
+
+  const lastSegment = trimmed.slice(trimmed.lastIndexOf('/') + 1);
+  if (lastSegment.includes('.')) return `${SITE_URL}${trimmed}`;
+
+  return `${SITE_URL}${trimmed}/`;
+}
+
+// export const SITE_URL = process.env.SITE_URL ?? 'http://localhost:3000';
 
 export const site = {
   site_name: 'Hoàng Văn Giỏi',
