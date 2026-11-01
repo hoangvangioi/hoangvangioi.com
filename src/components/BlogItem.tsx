@@ -1,16 +1,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { type Post as Page } from '@/lib/source';
+import { type Post } from '@/lib/source';
+import { formatShortDate, toDateOnly } from '@/lib/date';
+
+/**
+ * Post is `ReturnType<typeof source.getPage>`, so it includes undefined. Items
+ * come from sortedPages() and always exist; NonNullable avoids re-narrowing.
+ * The old notFound() branch would have turned a whole list page into a 404.
+ */
+type BlogItemPage = NonNullable<Post>;
 
 export function BlogItem({
   page,
   priority = false,
 }: {
-  page: Page;
+  page: BlogItemPage;
   priority?: boolean;
 }) {
-  if (!page) notFound();
+  const date =
+    page.data.date instanceof Date ? page.data.date : new Date(page.data.date);
 
   return (
     <Link
@@ -48,9 +56,12 @@ export function BlogItem({
           {page.data.description}
         </p>
 
-        <p className="mt-auto pt-2 text-end text-sm text-muted-foreground">
-          {page.data.date.toLocaleDateString()}
-        </p>
+        <time
+          dateTime={toDateOnly(date)}
+          className="mt-auto pt-2 text-end text-sm text-muted-foreground"
+        >
+          {formatShortDate(date)}
+        </time>
       </div>
     </Link>
   );

@@ -2,8 +2,16 @@ import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { gitConfig } from './shared';
 import { LogoSVG } from '@/components/LogoSVG';
 
+let cached: BaseLayoutProps | undefined;
+
+/**
+ * Header options, memoized at module scope. The value is build-time constant,
+ * so callers always get the same reference; do not cache anything here that
+ * depends on request data.
+ */
+
 export function baseOptions(): BaseLayoutProps {
-  return {
+  cached ??= {
     nav: {
       title: (
         <>
@@ -34,4 +42,5 @@ export function baseOptions(): BaseLayoutProps {
       },
     ],
   };
+  return cached;
 }

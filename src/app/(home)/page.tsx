@@ -27,11 +27,7 @@ export default function HomePage() {
           Embedded Linux, vi điều khiển và kỹ thuật phần mềm.
         </p>
         <div className="flex flex-row justify-center gap-2.5 max-sm:flex-col max-sm:items-stretch">
-          <LinkButton
-            href="/tags"
-            icon={<EyeIcon className="h-4 w-4" />}
-            variant="primary"
-          >
+          <LinkButton href="/tags" icon={<EyeIcon className="h-4 w-4" />}>
             Xem tất cả các thẻ
           </LinkButton>
           <LinkButton

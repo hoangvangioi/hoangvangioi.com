@@ -4,6 +4,19 @@ import type { FooterItem } from '@/lib/shared';
 import { gitConfig } from '@/lib/shared';
 import { LogoSVG } from '@/components/LogoSVG';
 
+const FIRST_YEAR = 2022;
+
+/** Year computed at build time in Vietnam time; static export keeps it stable. */
+const CURRENT_YEAR = Number(
+  new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date()),
+);
+
+const COPYRIGHT_RANGE =
+  CURRENT_YEAR > FIRST_YEAR ? `${FIRST_YEAR}–${CURRENT_YEAR}` : `${FIRST_YEAR}`;
+
 export default function Footer({ items }: { items: FooterItem[] }) {
   return (
     <footer className="mt-auto w-full border-t p-8 pb-12">
@@ -23,7 +36,7 @@ function Info() {
         <p className="text-xl font-bold">Hoàng Văn Giỏi</p>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
-        &copy; Copyright <time dateTime="2022">2022</time>. All rights reserved.
+        &copy; {COPYRIGHT_RANGE} Hoàng Văn Giỏi. All rights reserved.
       </p>
     </div>
   );
